@@ -1,0 +1,48 @@
+{
+  "name": "jarvis-server",
+  "version": "0.0.0",
+  "description": "Server to control all requests directed to my IoT devices in home",
+  "main": "./build/index.js",
+  "repository": "https://github.com/nickdex/Jarvis-server.git",
+  "author": "Nikhil Warke",
+  "license": "MIT",
+  "scripts": {
+    "dev": "yarn run build && yarn start",
+    "start": "yarn run serve",
+    "build": "yarn run build-ts && yarn run tslint && yarn run copy-static-assets",
+    "serve": "node dist/server.js",
+    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"yarn run watch-ts\" \"yarn run watch-node\"",
+    "watch-node": "nodemon dist/server.js",
+    "test": "jest --forceExit --coverage --verbose",
+    "build-ts": "tsc",
+    "watch-ts": "tsc -w",
+    "tslint": "tslint -c tslint.json -p tsconfig.json",
+    "copy-static-assets": "ts-node copyStaticAssets.ts",
+    "debug": "yarn run build && yarn run watch-debug",
+    "serve-debug": "nodemon --inspect dist/server.js",
+    "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"yarn run watch-ts\" \"yarn run serve-debug\""
+  },
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "concurrently": "^3.5.1",
+    "dotenv": "^4.0.0",
+    "express": "^4.16.2",
+    "morgan": "^1.9.0"
+  },
+  "devDependencies": {
+    "@types/body-parser": "^1.16.8",
+    "@types/dotenv": "^4.0.2",
+    "@types/express": "^4.0.35",
+    "@types/jest": "^22.1.0",
+    "@types/morgan": "^1.7.32",
+    "@types/node": "^9.3.0",
+    "@types/shelljs": "^0.7.7",
+    "jest": "^22.1.4",
+    "nodemon": "^1.13.0",
+    "shelljs": "^0.8.1",
+    "ts-jest": "^22.0.1",
+    "ts-node": "^4.0.2",
+    "tslint": "^5.8.0",
+    "typescript": "^2.6.2"
+  }
+}
