@@ -22,7 +22,7 @@ const parseParams = (params: any) => {
   };
 };
 
-const parseContext = (contexts: any[]) => {
+export const parseContext = (contexts: any[]) => {
   const context: any = {
     device: '',
     room: ''
