@@ -1,7 +1,6 @@
-import { DialogFlowIntent } from '../dialogflow/intent';
 import { IotPayload } from '../iot/payload';
 
-import { client, TOPIC } from './mqtt';
+import { client, SERVER_TOPIC, IOT_TOPIC } from './mqtt';
 import { MqttClient } from 'mqtt';
 
 export class IotDevice {
@@ -9,16 +8,19 @@ export class IotDevice {
 
   constructor() {
     this.client = client;
-    this.client.subscribe(TOPIC);
+    this.client.subscribe(IOT_TOPIC);
   }
 
   send(payload: IotPayload): Promise<string> {
     return new Promise((resolve, reject) => {
       if (this.client.connected) {
-        this.client.publish(TOPIC, JSON.stringify(payload), (err, packet) => {
-          client.on('message', (TOPIC, dataBuffer, packet) => {
+        console.log(`Topic: ${SERVER_TOPIC} | Send#Payload: ${JSON.stringify(payload)}`);
+
+        this.client.publish(SERVER_TOPIC, JSON.stringify(payload), (err, packet) => {
+
+          client.once('message', (topic, dataBuffer, packet) => {
             const message: any = JSON.parse(dataBuffer.toString());
-            console.log(`On#Message: ${JSON.stringify(message)}`);
+            console.log(`Topic: ${topic} | Once#Message: ${JSON.stringify(message)}`);
 
             if (message.sender === 'iot') resolve(message.message);
           });
