@@ -7,7 +7,6 @@
   "author": "Nikhil Warke",
   "license": "MIT",
   "scripts": {
-    "dev": "yarn run build && yarn start",
     "start": "yarn run serve",
     "build": "yarn run build-ts && yarn run tslint && yarn run copy-static-assets",
     "serve": "node dist/server.js",
@@ -18,7 +17,7 @@
     "watch-ts": "tsc -w",
     "tslint": "tslint -c tslint.json -p tsconfig.json",
     "copy-static-assets": "ts-node copyStaticAssets.ts",
-    "debug": "yarn run build && yarn run watch-debug",
+    "debug": "set DEBUG=* yarn run build && yarn run watch-debug",
     "serve-debug": "nodemon --inspect dist/server.js",
     "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"yarn run watch-ts\" \"yarn run serve-debug\""
   },
@@ -27,7 +26,8 @@
     "concurrently": "^3.5.1",
     "dotenv": "^4.0.0",
     "express": "^4.16.2",
-    "morgan": "^1.9.0"
+    "morgan": "^1.9.0",
+    "mqtt": "^2.15.1"
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.8",

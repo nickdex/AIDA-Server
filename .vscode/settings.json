@@ -1,7 +1,9 @@
 {
     "cSpell.words": [
+        "cloudmqtt",
         "nospace",
         "onespace",
         "quotemark"
-    ]
+    ],
+    "editor.tabSize": 2
 }
