@@ -5,7 +5,7 @@ import { IotDevice } from '../iot/device';
 import { IotPayload } from '../iot/payload';
 import { connect } from 'mqtt';
 
-const parseActionString = (str: string): any => {
+export const parseActionString = (str: string): any => {
   const intent: string[] = str.split('.');
 
   return {
