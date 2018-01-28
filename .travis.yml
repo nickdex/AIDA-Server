@@ -4,6 +4,7 @@ node_js:
 before_script:
   - yarn run build
 deploy:
+  skip_cleanup: true
   provider: heroku
   api_key:
     secure: "924345ab-53b5-45ec-a475-85cbc06bbe07"
