@@ -9,7 +9,6 @@ dotenv.config({ path: '.env'});
 
 // Controllers (route handlers)
 import * as agentController from './controllers/agent';
-import * as testController from './controllers/tester';
 
 // Create Express server
 const app = express();
