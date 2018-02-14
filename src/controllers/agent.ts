@@ -4,6 +4,7 @@ import { find } from 'lodash';
 import { IotDevice } from '../iot/device';
 import { IotPayload } from '../iot/payload';
 import { connect } from 'mqtt';
+import { DevicePin } from '../constants';
 
 export const parseActionString = (str: string): any => {
   const intent: string[] = str.split('.');
@@ -15,7 +16,6 @@ export const parseActionString = (str: string): any => {
 };
 
 const parseParams = (params: any) => {
-
   return {
     device: params.device,
     room: params.room
@@ -30,7 +30,8 @@ export const parseContext = (contexts: any[]) => {
   const deviceSwitchContext = find(contexts, ['name', 'device-switch']);
   const switchContext = find(contexts, ['name', 'switch']);
 
-  if (deviceSwitchContext) context.device = deviceSwitchContext.parameters.device;
+  if (deviceSwitchContext)
+    context.device = deviceSwitchContext.parameters.device;
   if (switchContext) context.room = switchContext.parameters.room;
 
   return context;
@@ -40,7 +41,7 @@ const parseIntent = (data: any): IotPayload => {
   const payload: any = {
     action: '',
     device: '',
-    room: '',
+    // room: '',
     sender: 'server'
   };
 
@@ -48,34 +49,46 @@ const parseIntent = (data: any): IotPayload => {
   const parsedParam = parseParams(data.parameters);
   const parsedContext = parseContext(data.contexts);
 
-  payload.room = parsedParam.room;
-  payload.action =  parsedAction.action;
+  let device = '';
+  let room = '';
 
   switch (parsedAction.entity) {
     case 'lights':
-      payload.room = parsedContext.room;
-      payload.device = parsedAction.entity;
+      room = parsedContext.room;
+      device = parsedAction.entity;
       break;
     case 'device':
-      payload.device = parsedContext.device;
+      device = parsedContext.device;
       break;
     default:
-      payload.device = 'invalid';
+      device = 'invalid';
+  }
+
+  // payload.room = parsedParam.room;
+  payload.action = parsedAction.action;
+
+  if (room === 'outdoor') {
+    payload.device = DevicePin.OUTDOOR;
+  } else if (device === 'fan') {
+    payload.device = DevicePin.FAN;
+  } else if (device === 'lights') {
+    payload.device = DevicePin.LIGHTS;
   }
 
   return payload;
 };
 
 export let agent = (req: Request, res: Response) => {
-
   const payload: IotPayload = parseIntent(req.body.result);
 
   const iotDevice = new IotDevice();
 
-  iotDevice.send(payload).then(response => {
-    res.send(JSON.stringify({ speech: response, displayText: response }));
-  }).catch(reason => {
-    res.send(JSON.stringify({ speech: reason, displayText: reason }));
-  });
-
+  iotDevice
+    .send(payload)
+    .then(response => {
+      res.send(JSON.stringify({ speech: response, displayText: response }));
+    })
+    .catch(reason => {
+      res.send(JSON.stringify({ speech: reason, displayText: reason }));
+    });
 };
