@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jarvis Server</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bulma/0.6.2/css/bulma.min.css">
+  <script defer src="https://use.fontawesome.com/releases/v5.0.0/js/all.js"></script>
+</head>
+
+<body>
+  <div id="app">
+    <section class="hero">
+      <div class="hero-body">
+        <div class="container">
+          <h1 class="title">
+            Jarvis Dashboard
+          </h1>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+
+        <div class="columns is-mobile">
+          <div class="column" v-for="device in devices" :key="device.key">
+            <button :class="{button: true, 'is-primary': device.isOn, 'is-danger': !device.isOn}" @click="toggleState(device)">
+              {{ device.name }}
+            </button>
+
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+  <script type="text/javascript">
+    var app = new Vue({
+      el: '#app',
+      methods: {
+        toggleState(device) {
+          axios.post('/web', {
+            key: device.key,
+            isOn: device.isOn
+          }).then(result => {
+            console.log(`home#Result: ${result}`);
+            device.isOn = !device.isOn
+          })
+        }
+      },
+      data: {
+        devices: [
+          {
+            name: 'Fan',
+            key: 'fan',
+            isOn: true
+          },
+          {
+            name: 'Room Lights',
+            key: 'lights',
+            isOn: true
+          },
+          {
+            name: 'Outdoor Light',
+            key: 'outdoor',
+            isOn: true
+          }]
+      }
+    })
+  </script>
+</body>
+
+</html>
