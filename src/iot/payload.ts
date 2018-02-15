@@ -1,6 +1,12 @@
-export interface IotPayload {
-    room: string;
-    device: string;
-    action: string;
-    sender: string;
+import { DevicePin } from '../constants';
+
+export class IotPayload {
+  room: string;
+  device: DevicePin;
+  action: string;
+  sender: string;
+
+  constructor() {
+    this.sender = 'server';
+  }
 }
