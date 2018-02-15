@@ -25,7 +25,11 @@
 
         <div class="columns is-mobile">
           <div class="column" v-for="device in devices" :key="device.key">
-            <button :class="{button: true, 'is-primary': device.isOn, 'is-danger': !device.isOn}" @click="toggleState(device)">
+            <button :class="{
+              button: true,
+              'is-primary': device.isOn,
+              'is-danger': !device.isOn
+            }" @click="toggleState(device)">
               {{ device.name }}
             </button>
 
@@ -36,7 +40,7 @@
 
 
   </div>
-  <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+  <script src="https://unpkg.com/vue/dist/vue.js"></script>
   <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
   <script type="text/javascript">
     var app = new Vue({
@@ -47,7 +51,7 @@
             key: device.key,
             isOn: device.isOn
           }).then(result => {
-            console.log(`home#Result: ${result}`);
+            console.log(`home#Result: ${JSON.stringify(result)}`);
             device.isOn = !device.isOn
           })
         }
