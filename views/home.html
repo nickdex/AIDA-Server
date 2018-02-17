@@ -24,7 +24,7 @@
       <div class="container">
 
         <div class="columns is-mobile">
-          <div class="column" v-for="device in devices" :key="device.key">
+          <div class="column" v-for="device in devices" :key="device._id">
             <button :class="{
               button: true,
               'is-primary': device.isOn,
@@ -48,31 +48,20 @@
       methods: {
         toggleState(device) {
           axios.post('/web', {
-            key: device.key,
-            isOn: device.isOn
+            _id: device._id,
+            isOn: !device.isOn
           }).then(result => {
-            console.log(`home#Result: ${JSON.stringify(result)}`);
-            device.isOn = !device.isOn
+            console.log(`home#Result: ${JSON.stringify(result.data)}`);
+            device.isOn = result.data.isOn
           })
         }
       },
+      mounted: async function () {
+        let response = await axios.get('/devices')
+        this.devices = response.data.map(i => i);
+      },
       data: {
-        devices: [
-          {
-            name: 'Fan',
-            key: 'fan',
-            isOn: true
-          },
-          {
-            name: 'Room Lights',
-            key: 'lights',
-            isOn: true
-          },
-          {
-            name: 'Outdoor Light',
-            key: 'outdoor',
-            isOn: true
-          }]
+        devices: []
       }
     })
   </script>

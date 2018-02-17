@@ -5,6 +5,7 @@ import { IotDevice } from '../iot/device';
 import { IotPayload } from '../iot/payload';
 import { connect } from 'mqtt';
 import { DevicePin } from '../constants';
+import { DeviceService } from '../service';
 
 export const parseActionString = (str: string): any => {
   const intent: string[] = str.split('.');
@@ -82,6 +83,12 @@ export let agent = (req: Request, res: Response) => {
   const payload: IotPayload = parseIntent(req.body.result);
 
   const iotDevice = new IotDevice();
+
+  // DB Update
+  const isOn = payload.action === 'on';
+  DeviceService.deviceService
+    .patch(payload.device, { isOn: isOn })
+    .then(item => console.log(`DB Update: ${JSON.stringify(item)}`));
 
   iotDevice
     .send(payload)
