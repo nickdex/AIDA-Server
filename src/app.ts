@@ -1,6 +1,6 @@
-import * as express from 'express';
-import * as bodyParser from 'body-parser';
-import * as logger from 'morgan';
+import feathers from '@feathersjs/feathers';
+import * as express from '@feathersjs/express';
+import logger = require('morgan');
 import * as dotenv from 'dotenv';
 import * as path from 'path';
 
@@ -12,16 +12,19 @@ import * as agentController from './controllers/agent';
 import * as webController from './controllers/web';
 
 // Create Express server
-const app = express();
+const app = express.default(feathers());
 
 // #region Express configuration
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, '../views'));
 app.set('view engine', 'pug');
 app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.errorHandler());
+// #endregion
+
 // #endregion
 
 // #region Frontend
