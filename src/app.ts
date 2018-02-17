@@ -10,6 +10,8 @@ dotenv.config({ path: '.env' });
 // Controllers (route handlers)
 import * as agentController from './controllers/agent';
 import * as webController from './controllers/web';
+import { Device } from './model/device';
+import { DeviceService } from './service';
 
 // Create Express server
 const app = express.default(feathers());
@@ -25,10 +27,14 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.errorHandler());
 // #endregion
 
+// #region DB Initialization
+app.use('/devices', DeviceService.service());
+DeviceService.initDb(app.service('/devices'));
 // #endregion
 
 // #region Frontend
 app.get('/', webController.index);
+app.get('/devices', webController.devices);
 app.post('/web', webController.iot);
 // #endregion
 
