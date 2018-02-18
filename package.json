@@ -1,16 +1,19 @@
 {
   "name": "jarvis-server",
   "version": "0.0.0",
-  "description": "Server to control all requests directed to my IoT devices in home",
+  "description":
+    "Server to control all requests directed to my IoT devices in home",
   "main": "./build/index.js",
   "repository": "https://github.com/nickdex/Jarvis-server.git",
   "author": "Nikhil Warke",
   "license": "MIT",
   "scripts": {
     "start": "yarn run serve",
-    "build": "yarn run copy-static-assets && yarn run build-ts && yarn run tslint",
-    "serve": "node dist/server.js",
-    "watch": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"yarn run watch-ts\" \"yarn run watch-node\"",
+    "build":
+      "yarn run copy-static-assets && yarn run build-ts && yarn run tslint",
+    "serve": "yarn run build && node dist/server.js",
+    "watch":
+      "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"yarn run watch-ts\" \"yarn run watch-node\"",
     "watch-node": "nodemon dist/server.js",
     "test": "jest --forceExit --coverage --verbose",
     "build-ts": "tsc",
@@ -19,7 +22,8 @@
     "copy-static-assets": "ts-node copyStaticAssets.ts",
     "debug": "set DEBUG=* yarn run build && yarn run watch-debug",
     "serve-debug": "nodemon --inspect dist/server.js",
-    "watch-debug": "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"yarn run watch-ts\" \"yarn run serve-debug\""
+    "watch-debug":
+      "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"yarn run watch-ts\" \"yarn run serve-debug\""
   },
   "dependencies": {
     "@feathersjs/express": "^1.2.0",
