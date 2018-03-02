@@ -1,7 +1,8 @@
 import { Application } from '@feathersjs/express';
 import { Params, Service } from '@feathersjs/feathers';
-import feathersNedb from 'feathers-nedb';
 import { log } from 'util';
+
+import * as feathersNedb from 'feathers-nedb';
 
 import { DevicePin } from './constants';
 import { Device } from './model/device';
