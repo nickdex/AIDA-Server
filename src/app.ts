@@ -6,7 +6,7 @@ import * as path from 'path';
 import feathers from '@feathersjs/feathers';
 
 // Load environment variables from .env file, where API keys and passwords are configured
-dotenv.config({ path: '.env' });
+dotenv.config({ path: 'env/.env' });
 
 // Controllers (route handlers)
 import * as agentController from './controllers/agent';

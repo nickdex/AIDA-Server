@@ -58,6 +58,7 @@ dist/
 .yarn-integrity
 
 # dotenv environment variables file
-.env
+env/.env
 
+# Database file
 data/
