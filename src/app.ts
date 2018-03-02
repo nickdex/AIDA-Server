@@ -1,8 +1,9 @@
-import feathers from '@feathersjs/feathers';
 import * as express from '@feathersjs/express';
-import logger = require('morgan');
 import * as dotenv from 'dotenv';
+import * as logger from 'morgan';
 import * as path from 'path';
+
+import feathers from '@feathersjs/feathers';
 
 // Load environment variables from .env file, where API keys and passwords are configured
 dotenv.config({ path: '.env' });
@@ -26,9 +27,8 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.errorHandler());
 // #endregion
 
-// #region DB Initialization
-app.use('/devices', DeviceService.service());
-DeviceService.initDb(app.service('/devices'));
+// #region Service Registration
+app.configure(DeviceService.initDb);
 // #endregion
 
 // #region Frontend

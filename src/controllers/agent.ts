@@ -1,9 +1,10 @@
 import { Request, Response } from 'express';
 import { find } from 'lodash';
+import { error, log } from 'util';
 
+import { DevicePin } from '../constants';
 import { IotDevice } from '../iot/device';
 import { IotPayload } from '../iot/payload';
-import { DevicePin } from '../constants';
 import { DeviceService } from '../service';
 
 export const parseActionString = (str: string): any => {
@@ -23,9 +24,12 @@ export const parseContext = (contexts: any[]) => {
   const deviceSwitchContext = find(contexts, ['name', 'device-switch']);
   const switchContext = find(contexts, ['name', 'switch']);
 
-  if (deviceSwitchContext)
+  if (deviceSwitchContext) {
     context.device = deviceSwitchContext.parameters.device;
-  if (switchContext) context.room = switchContext.parameters.room;
+  }
+  if (switchContext) {
+    context.room = switchContext.parameters.room;
+  }
 
   return context;
 };
@@ -77,9 +81,9 @@ export let agent = (req: Request, res: Response) => {
 
   // DB Update
   const isOn = payload.action === 'on';
-  DeviceService.deviceService
-    .patch(payload.device, { isOn: isOn })
-    .then(item => console.log(`DB Update: ${JSON.stringify(item)}`));
+  DeviceService.patch(payload.device, { isOn: isOn })
+    .then(item => log(`DB Update: ${JSON.stringify(item)}`))
+    .catch(reason => error(`DB update failed: ${reason}`));
 
   iotDevice
     .send(payload)
