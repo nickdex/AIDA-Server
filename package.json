@@ -1,30 +1,31 @@
 {
   "name": "jarvis-server",
   "version": "0.0.0",
-  "description":
-    "Server to control all requests directed to my IoT devices in home",
+  "description": "Server to control all requests directed to my IoT devices in home",
   "main": "./build/index.js",
-  "repository": "https://github.com/nickdex/Jarvis-server.git",
   "author": "Nikhil Warke",
   "license": "MIT",
+  "repository": "https://github.com/nickdex/Jarvis-server.git",
+  "bugs": {
+    "url": "https://github.com/jsynowiec/node-typescript-boilerplate/issues"
+  },
+  "engineStrict": true,
+  "engines": {
+    "node": ">= 8.9.0"
+  },
   "scripts": {
     "start": "yarn run serve",
-    "build":
-      "yarn run copy-static-assets && yarn run build-ts && yarn run tslint",
+    "build": "tsc -p tsconfig.release.json",
+    "dev": "yarn run build && node dist/server.js",
     "serve": "yarn run build && forever start dist/server.js",
     "stop": "forever stop dist/server.js",
-    "watch":
-      "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"yarn run watch-ts\" \"yarn run watch-node\"",
-    "watch-node": "nodemon dist/server.js",
-    "test": "jest --forceExit --coverage --verbose",
-    "build-ts": "tsc",
-    "watch-ts": "tsc -w",
-    "tslint": "tslint -c tslint.json -p tsconfig.json",
-    "copy-static-assets": "ts-node copyStaticAssets.ts",
-    "debug": "set DEBUG=* yarn run build && yarn run watch-debug",
-    "serve-debug": "nodemon --inspect dist/server.js",
-    "watch-debug":
-      "concurrently -k -p \"[{name}]\" -n \"TypeScript,Node\" -c \"yellow.bold,cyan.bold,green.bold\" \"yarn run watch-ts\" \"yarn run serve-debug\""
+    "clean": "rimraf coverage build tmp",
+    "watch": "tsc -w -p tsconfig.release.json",
+    "lint": "tslint -t stylish --project \"tsconfig.json\"",
+    "pretest": "npm run lint",
+    "test": "npm run test-only",
+    "test-only": "jest --coverage",
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@feathersjs/express": "^1.2.0",
@@ -38,7 +39,8 @@
     "morgan": "^1.9.0",
     "mqtt": "^2.15.1",
     "nedb": "^1.8.0",
-    "pug": "^2.0.0-rc.4"
+    "pug": "^2.0.0-rc.4",
+    "tslib": "~1.9.0"
   },
   "devDependencies": {
     "@types/body-parser": "^1.16.8",
@@ -59,6 +61,8 @@
     "ts-jest": "^22.0.1",
     "ts-node": "^4.0.2",
     "tslint": "^5.8.0",
+    "tslint-microsoft-contrib": "~5.0.2",
+    "tsutils": "^2.21.0",
     "typescript": "^2.6.2"
   }
 }
