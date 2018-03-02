@@ -3,7 +3,6 @@ import { find } from 'lodash';
 
 import { IotDevice } from '../iot/device';
 import { IotPayload } from '../iot/payload';
-import { connect } from 'mqtt';
 import { DevicePin } from '../constants';
 import { DeviceService } from '../service';
 
@@ -13,13 +12,6 @@ export const parseActionString = (str: string): any => {
   return {
     action: intent[3],
     entity: intent[1]
-  };
-};
-
-const parseParams = (params: any) => {
-  return {
-    device: params.device,
-    room: params.room
   };
 };
 
@@ -47,7 +39,6 @@ const parseIntent = (data: any): IotPayload => {
   };
 
   const parsedAction = parseActionString(data.action);
-  const parsedParam = parseParams(data.parameters);
   const parsedContext = parseContext(data.contexts);
 
   let device = '';

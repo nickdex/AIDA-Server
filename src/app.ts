@@ -10,7 +10,6 @@ dotenv.config({ path: '.env' });
 // Controllers (route handlers)
 import * as agentController from './controllers/agent';
 import * as webController from './controllers/web';
-import { Device } from './model/device';
 import { DeviceService } from './service';
 
 // Create Express server

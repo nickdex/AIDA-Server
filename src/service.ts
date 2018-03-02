@@ -1,4 +1,4 @@
-import { Service, Application } from '@feathersjs/feathers';
+import { Service } from '@feathersjs/feathers';
 import { Device } from './model/device';
 import { DevicePin } from './constants';
 

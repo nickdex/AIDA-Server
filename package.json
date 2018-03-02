@@ -22,8 +22,8 @@
     "clean": "rimraf coverage build tmp",
     "watch": "tsc -w -p tsconfig.release.json",
     "lint": "tslint -t stylish --project \"tsconfig.json\"",
-    "pretest": "npm run lint",
-    "test": "npm run test-only",
+    "pretest": "yarn run lint",
+    "test": "yarn run test-only",
     "test-only": "jest --coverage",
     "test:watch": "jest --watch"
   },

@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 import { IotDevice } from '../iot/device';
 import { IotPayload } from '../iot/payload';
-import { DevicePin } from '../constants';
 import { DeviceService } from '../service';
 import { Device } from '../model/device';
 
