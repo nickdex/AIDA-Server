@@ -14,12 +14,13 @@
     "node": ">= 8.9.0"
   },
   "scripts": {
-    "start": "yarn run serve",
+    "start": "node dist/server.js",
     "build": "tsc -p tsconfig.release.json",
     "dev": "yarn run build && node dist/server.js",
-    "serve": "yarn run build && forever start dist/server.js",
+    "local": "yarn run build && yarn run serve",
+    "serve": "forever start dist/server.js ",
     "stop": "forever stop dist/server.js",
-    "clean": "rimraf coverage build tmp",
+    "clean": "rimraf coverage dist tmp",
     "watch": "tsc -w -p tsconfig.release.json",
     "lint": "tslint -t stylish --project \"tsconfig.json\"",
     "pretest": "yarn run lint",
