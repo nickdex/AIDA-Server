@@ -120,7 +120,8 @@ fi
 
 # 4. Compile TypeScript
 echo "Transpiling TypeScript in $DEPLOYMENT_TARGET"
-eval node $DEPLOYMENT_TARGET/node_modules/typescript/bin/tsc -p "$DEPLOYMENT_TARGET"
+eval npm build
+eval npm start
 
 ##################################################################################################################################
 echo "Finished successfully."
