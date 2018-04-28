@@ -119,10 +119,10 @@ if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
 fi
 
 # 4. Compile TypeScript
+cd "$DEPLOYMENT_TARGET"
 echo "Transpiling TypeScript in $DEPLOYMENT_TARGET"
 eval npm build
 echo "Transpilation done, starting server"
-echo "dep target - $DEPLOYMENT_TARGET"
 eval npm start
 
 ##################################################################################################################################
