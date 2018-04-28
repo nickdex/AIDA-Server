@@ -119,7 +119,7 @@ if [ -e "$DEPLOYMENT_TARGET/package.json" ]; then
 fi
 
 # 4. Compile TypeScript
-echo "Transpiling TypeScript in %DEPLOYMENT_TARGET%..."
+echo "Transpiling TypeScript in $DEPLOYMENT_TARGET"
 eval node $DEPLOYMENT_TARGET/node_modules/typescript/bin/tsc -p "$DEPLOYMENT_TARGET"
 
 ##################################################################################################################################
