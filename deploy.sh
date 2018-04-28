@@ -121,7 +121,8 @@ fi
 # 4. Compile TypeScript
 echo "Transpiling TypeScript in $DEPLOYMENT_TARGET"
 eval npm build
-eval npm start
+echo "Transpilation done, starting server"
+eval node "$DEPLOYMENT_TARGET/dist/server.js"
 
 ##################################################################################################################################
 echo "Finished successfully."
