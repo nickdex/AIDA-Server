@@ -29,7 +29,7 @@ export namespace DeviceService {
   }
 
   export function initDb(app: Application<object>) {
-    app.use('devices', feathersNedb.default<Device>({ Model: model }));
+    app.use('devices', feathersNedb<Device>({ Model: model }));
     deviceService = app.service('devices');
 
     deviceService
