@@ -1,4 +1,5 @@
 import * as express from '@feathersjs/express';
+import * as cors from 'cors';
 import * as dotenv from 'dotenv';
 import * as logger from 'morgan';
 import * as path from 'path';
@@ -25,6 +26,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.errorHandler());
+app.use(cors());
 // #endregion
 
 // #region Service Registration
@@ -35,6 +37,7 @@ app.configure(DeviceService.initDb);
 app.get('/', webController.index);
 app.get('/devices', webController.devices);
 app.post('/web', webController.iot);
+
 // #endregion
 
 // #region App Router
