@@ -3,7 +3,6 @@ import { error, log } from 'util';
 
 import { IotDevice } from '../iot/device';
 import { IotPayload } from '../iot/payload';
-import { Device } from '../model/device';
 import { DeviceService } from '../service';
 
 /**
@@ -18,29 +17,19 @@ export const devices = async (req: Request, res: Response) => {
   res.json(await DeviceService.find());
 };
 
-const getPayload = (data: Device): IotPayload => {
-  const payload = new IotPayload();
-  payload.device = data._id;
-  payload.action = data.isOn ? 'on' : 'off';
-
-  return payload;
-};
-
 export let iot = (req: Request, res: Response) => {
-  const payload: IotPayload = getPayload(req.body);
-
   const iotDevice = new IotDevice();
+  const payload: IotPayload = { ...req.body };
 
-  // DB Update
-  const isOn = payload.action === 'on';
-  DeviceService.patch(payload.device, { isOn: isOn })
-    .then(item => {
-      log(`DB Update: ${JSON.stringify(item)}`);
-      res.json(item);
+  log(`Payload recieved: ${JSON.stringify(payload)}`);
+
+  iotDevice
+    .send(payload)
+    .then(result => {
+      log(`Message sent successfully. Result: ${JSON.stringify(result)}`);
+      res.send(result);
     })
-    .catch(reason => error(`DB update failed: ${reason}`));
-
-  iotDevice.send(payload).catch(reason => {
-    console.error(`Sending to IOT failed\n${reason}`);
-  });
+    .catch(reason => {
+      error(`Sending to IOT failed\n${reason}`);
+    });
 };
