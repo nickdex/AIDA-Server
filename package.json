@@ -10,7 +10,7 @@
     "url": "https://github.com/jsynowiec/node-typescript-boilerplate/issues"
   },
   "engines": {
-    "node": ">=8"
+    "node": "~8.11"
   },
   "scripts": {
     "start": "node dist/server.js",
@@ -23,6 +23,7 @@
     "watch": "tsc -w -p tsconfig.release.json",
     "lint": "tslint -t stylish --project \"tsconfig.json\"",
     "pretest": "yarn run lint",
+    "postinstall": "yarn build",
     "test": "yarn run test-only",
     "test-only": "jest --coverage",
     "test:watch": "jest --watch"
