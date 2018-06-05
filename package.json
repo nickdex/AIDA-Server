@@ -9,6 +9,10 @@
   "bugs": {
     "url": "https://github.com/jsynowiec/node-typescript-boilerplate/issues"
   },
+  "engines": {
+    "node": ">=8.11",
+    "npm": "~6.10"
+  },
   "scripts": {
     "start": "node dist/server.js",
     "build": "tsc -p tsconfig.release.json",
