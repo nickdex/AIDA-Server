@@ -1,13 +1,13 @@
 {
   "name": "jarvis-server",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Server to control all requests directed to my IoT devices in home",
-  "main": "./build/index.js",
+  "main": "./dist/server.js",
   "author": "Nikhil Warke",
   "license": "MIT",
-  "repository": "https://github.com/nickdex/Jarvis-server.git",
+  "repository": "https://github.com/nickdex/Jarvis-Server.git",
   "bugs": {
-    "url": "https://github.com/jsynowiec/node-typescript-boilerplate/issues"
+    "url": "https://github.com/nickdex/Jarvis-Server/issues"
   },
   "scripts": {
     "start": "node dist/server.js",
