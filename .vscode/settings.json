@@ -1,11 +1,11 @@
 {
-    "cSpell.words": [
-        "autoload",
-        "cloudmqtt",
-        "feathersjs",
-        "nospace",
-        "onespace",
-        "quotemark"
-    ],
-    "editor.tabSize": 2
+  "cSpell.words": [
+    "autoload",
+    "cloudmqtt",
+    "feathersjs",
+    "nospace",
+    "onespace",
+    "quotemark"
+  ],
+  "editor.tabSize": 2
 }
