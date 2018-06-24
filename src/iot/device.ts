@@ -1,8 +1,8 @@
 import { MqttClient } from 'mqtt';
-import { log } from 'util';
-
 import { IotPayload } from '../iot/payload';
 import { client, IOT_TOPIC, SERVER_TOPIC } from './mqtt';
+
+import logger from '../logger';
 
 /**
  * It can send a message to listening iot device on Server topic.
@@ -21,8 +21,9 @@ export class IotDevice {
   public send(payload: IotPayload): Promise<string> {
     return new Promise((resolve, reject) => {
       if (this.client.connected) {
-        log(
-          `Topic: ${SERVER_TOPIC} | Send#Payload: ${JSON.stringify(payload)}`
+        logger.verbose('Client is connected');
+        logger.verbose(
+          `Topic: ${SERVER_TOPIC} | Payload sent: ${JSON.stringify(payload)}`
         );
 
         this.client.publish(
@@ -31,7 +32,9 @@ export class IotDevice {
           (err, packet) => {
             client.once('message', (topic, dataBuffer, incomingData) => {
               const message: any = JSON.parse(dataBuffer.toString());
-              log(`Topic: ${topic} | Once#Message: ${JSON.stringify(message)}`);
+              logger.verbose(
+                `Topic: ${topic} | Message Received: ${JSON.stringify(message)}`
+              );
 
               if (message.sender === 'iot') {
                 resolve(message.message);
@@ -45,7 +48,7 @@ export class IotDevice {
         );
       } else if (!this.client.reconnecting) {
         this.client.reconnect();
-        resolve('Reconnecting Please try later');
+        reject('Reconnecting Please try later');
       }
     });
   }

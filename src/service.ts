@@ -1,6 +1,6 @@
 import { Application } from '@feathersjs/express';
 import { Params, Service } from '@feathersjs/feathers';
-import { log } from 'util';
+import logger from './logger';
 
 import * as feathersNedb from 'feathers-nedb';
 
@@ -46,6 +46,6 @@ export namespace DeviceService {
           name: 'Outdoor Lights'
         }
       ])
-      .catch(err => log('Db already exists'));
+      .catch(err => logger.error('Db already exists'));
   }
 }
