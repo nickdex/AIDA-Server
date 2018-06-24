@@ -1,11 +1,11 @@
 import { Request, Response } from 'express';
 import { find } from 'lodash';
-import { error, log } from 'util';
-
 import { DevicePin } from '../constants';
 import { IotDevice } from '../iot/device';
 import { IotPayload } from '../iot/payload';
 import { DeviceService } from '../service';
+
+import logger from '../logger';
 
 export const parseActionString = (str: string): any => {
   const intent: string[] = str.split('.');
@@ -82,8 +82,8 @@ export let agent = (req: Request, res: Response) => {
   // DB Update
   const isOn = payload.action === 'on';
   DeviceService.patch(payload.device, { isOn: isOn })
-    .then(item => log(`DB Update: ${JSON.stringify(item)}`))
-    .catch(reason => error(`DB update failed: ${reason}`));
+    .then(item => logger.info(`DB Update: ${JSON.stringify(item)}`))
+    .catch(reason => logger.error(`DB update failed: ${reason}`));
 
   iotDevice
     .send(payload)

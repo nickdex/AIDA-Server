@@ -1,5 +1,5 @@
 import { Server } from 'http';
-import { log } from 'util';
+import logger from './logger';
 
 import * as app from './app';
 
@@ -7,10 +7,10 @@ import * as app from './app';
 // app.use(errorHandler());
 
 const server: Server = app.listen(app.get('port'), () => {
-  log(
+  logger.info(
     `App is running at http://localhost:${app.get('port')} in ${app.get('env')}`
   );
-  log(' Press CTRL-C to stop\n');
+  logger.info(' Press CTRL-C to stop\n');
 });
 
 export = server;

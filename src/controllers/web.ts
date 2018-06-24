@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
-import { error, log } from 'util';
-
 import { IotDevice } from '../iot/device';
 import { IotPayload } from '../iot/payload';
 import { DeviceService } from '../service';
+
+import logger from '../logger';
 
 /**
  * GET /
@@ -18,18 +18,22 @@ export const devices = async (req: Request, res: Response) => {
 };
 
 export let iot = (req: Request, res: Response) => {
-  const iotDevice = new IotDevice();
-  const payload: IotPayload = { ...req.body };
+  logger.info(`Request received: ${JSON.stringify(req.body)}`);
 
-  log(`Payload recieved: ${JSON.stringify(payload)}`);
+  const iotDevice = new IotDevice();
+  logger.verbose('MQTT object created');
+
+  const payload: IotPayload = { ...req.body };
 
   iotDevice
     .send(payload)
     .then(result => {
-      log(`Message sent successfully. Result: ${JSON.stringify(result)}`);
+      logger.info(
+        `Message sent successfully. Result: ${JSON.stringify(result)}`
+      );
       res.send(result);
     })
     .catch(reason => {
-      error(`Sending to IOT failed\n${reason}`);
+      logger.error(`Sending to IOT failed\n${reason}`);
     });
 };
