@@ -6,19 +6,26 @@ import logger from '../logger';
 const kvUrl = 'https://api.keyvalue.xyz/7428d0ee/pushdata';
 
 export const index = async (req: Request, res: Response) => {
-  const device = req.body.device;
-  logger.debug(`Data recieved: ${device}`);
+  const name = req.body.name;
+  const uid = req.body.uid;
+  logger.debug(`Data received: Name: ${name}, UID: ${uid}`);
 
   let pushData = (await axios.get(kvUrl)).data;
-  pushData[device.name] = device.uid;
+
+  pushData[name] = uid;
   axios.post(kvUrl, pushData);
 
-  pushData.res.sendStatus(200);
+  res.sendStatus(200);
 };
 
 export const test = async (req: Request, res: Response) => {
-  const devices = await axios.get(kvUrl);
-  const uid = devices[req.query.name];
+  logger.info(
+    `Test request with Name: ${req.params.name} Data: ${req.query.data}`
+  );
+  const devices = (await axios.get(kvUrl)).data;
+  logger.debug(JSON.stringify(devices));
+
+  const uid = devices[req.params.name];
 
   // Set up the sender with your GCM/FCM API key (declare this once for multiple messages)
   var sender = new fcm.Sender(process.env.FCM_API_KEY);
@@ -34,6 +41,8 @@ export const test = async (req: Request, res: Response) => {
     response
   ) {
     if (err) logger.error(err);
-    else logger.info(response);
+    else logger.info(JSON.stringify(response));
   });
+
+  res.sendStatus(200);
 };
