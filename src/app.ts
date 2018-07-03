@@ -46,7 +46,7 @@ app.post('/web', webController.iot);
 
 //#region FCM Push Notifications
 app.post('/fcm', fcmController.index);
-app.get('/fcm/test/:name/:data', fcmController.test);
+app.post('/fcm/test/:name', fcmController.test);
 //#endregion
 
 // #region App Router
