@@ -14,6 +14,7 @@ logger.verbose('Environment file loaded');
 // Controllers (route handlers)
 import * as agentController from './controllers/agent';
 import * as webController from './controllers/web';
+import * as pushController from './controllers/push';
 import { DeviceService } from './service';
 
 // Create Express server
@@ -42,6 +43,11 @@ app.get('/', webController.index);
 app.get('/devices', webController.devices);
 app.post('/web', webController.iot);
 // #endregion
+
+//#region Web Push Notifications
+app.post('/push', pushController.index);
+app.post('/push/send/:name', pushController.send);
+//#endregion
 
 // #region App Router
 app.post('/agent', agentController.agent);
