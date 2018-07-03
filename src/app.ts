@@ -14,7 +14,7 @@ logger.verbose('Environment file loaded');
 // Controllers (route handlers)
 import * as agentController from './controllers/agent';
 import * as webController from './controllers/web';
-import * as fcmController from './controllers/fcm';
+import * as pushController from './controllers/push';
 import { DeviceService } from './service';
 
 // Create Express server
@@ -44,9 +44,9 @@ app.get('/devices', webController.devices);
 app.post('/web', webController.iot);
 // #endregion
 
-//#region FCM Push Notifications
-app.post('/fcm', fcmController.index);
-app.post('/fcm/test/:name', fcmController.test);
+//#region Web Push Notifications
+app.post('/push', pushController.index);
+app.post('/push/send/:name', pushController.send);
 //#endregion
 
 // #region App Router
