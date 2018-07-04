@@ -15,6 +15,8 @@ logger.verbose('Environment file loaded');
 import * as agentController from './controllers/agent';
 import * as webController from './controllers/web';
 import * as pushController from './controllers/push';
+
+// Services
 import { DeviceService } from './service';
 
 // Create Express server
