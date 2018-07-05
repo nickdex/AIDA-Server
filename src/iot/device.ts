@@ -2,7 +2,7 @@ import { MqttClient } from 'mqtt';
 import { IotPayload } from '../iot/payload';
 import { client, IOT_TOPIC, SERVER_TOPIC } from './mqtt';
 
-import logger from '../logger';
+import { logger } from '../logger';
 
 /**
  * It can send a message to listening iot device on Server topic.
@@ -53,3 +53,5 @@ export class IotDevice {
     });
   }
 }
+
+export const iotDevice = new IotDevice();

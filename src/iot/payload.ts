@@ -5,7 +5,6 @@ import { DevicePin } from '../constants';
  * @class IotPayload
  */
 export class IotPayload {
-  public room: string;
   public device: DevicePin;
   public action: string;
   public sender: string;

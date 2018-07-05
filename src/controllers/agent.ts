@@ -5,7 +5,7 @@ import { IotDevice } from '../iot/device';
 import { IotPayload } from '../iot/payload';
 import { DeviceService } from '../service';
 
-import logger from '../logger';
+import { logger } from '../logger';
 
 export const parseActionString = (str: string): any => {
   const intent: string[] = str.split('.');
