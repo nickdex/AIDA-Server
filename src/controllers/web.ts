@@ -3,7 +3,7 @@ import { iotDevice } from '../iot/device';
 import { IotPayload } from '../iot/payload';
 import { DeviceService } from '../service';
 
-import logger from '../logger';
+import { logger } from '../logger';
 
 /**
  * GET /

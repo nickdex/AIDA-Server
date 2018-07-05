@@ -4,8 +4,8 @@ import * as dotenv from 'dotenv';
 import * as morgan from 'morgan';
 import * as path from 'path';
 
-import logger from './logger';
 import feathers from '@feathersjs/feathers';
+import { logger } from './logger';
 
 // Load environment variables from .env file, where API keys and passwords are configured
 dotenv.config({ path: 'env/.env' });
@@ -13,8 +13,10 @@ logger.verbose('Environment file loaded');
 
 // Controllers (route handlers)
 import * as agentController from './controllers/agent';
-import * as webController from './controllers/web';
 import * as pushController from './controllers/push';
+import * as webController from './controllers/web';
+
+// Services
 import { DeviceService } from './service';
 
 // Create Express server

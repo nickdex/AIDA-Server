@@ -14,7 +14,7 @@ const levels = {
   verbose: 4
 };
 
-const logger = winston.createLogger({
+export const logger = winston.createLogger({
   level: 'verbose',
   levels: levels,
   transports: [new winston.transports.File({ filename: 'app.log' })],
@@ -41,5 +41,3 @@ if (process.env.NODE_ENV !== 'production') {
     })
   );
 }
-
-export default logger;
