@@ -1,10 +1,8 @@
 import { Server } from 'http';
 import { logger } from './logger';
+import { startAiScheduler } from './scheduler';
 
 import * as app from './app';
-
-// import * as errorHandler from 'errorhandler';
-// app.use(errorHandler());
 
 const server: Server = app.listen(app.get('port'), () => {
   logger.info(
@@ -12,5 +10,7 @@ const server: Server = app.listen(app.get('port'), () => {
   );
   logger.info(' Press CTRL-C to stop\n');
 });
+
+startAiScheduler();
 
 export = server;
