@@ -1,11 +1,11 @@
-import * as webpush from 'web-push';
-
 import { Request, Response } from 'express';
 import { iotDevice } from '../iot/device';
 import { IotPayload } from '../iot/payload';
 
 import axios from 'axios';
 import { logger } from '../logger';
+import { PushNotification } from '../prediction/notification';
+import { DevicePin } from '../constants';
 
 const kvUrl = process.env.KV_PUSH_URL;
 
@@ -33,7 +33,7 @@ export const click = async (req: Request, res: Response) => {
   // Execute action using mqtt
   const payload: IotPayload = {
     action,
-    device: 2, // TODO: Use from predictive model
+    device: DevicePin.FAN, // TODO: Use from predictive model
     sender: 'server'
   };
   const response = await iotDevice.send(payload);
@@ -43,31 +43,13 @@ export const click = async (req: Request, res: Response) => {
 };
 
 export const send = async (req: Request, res: Response) => {
-  const name = req.params.name;
+  const clientName = req.params.name;
   const payload = req.body;
-  const actions = [
-    { action: 'on', title: 'Turn on' },
-    { action: 'off', title: 'Turn off' }
-  ];
-  payload.actions = actions;
 
-  logger.info(
-    `Request for sending notification to ${name} with Data: ${JSON.stringify(
-      payload
-    )}`
-  );
-
-  const devices = (await axios.get(kvUrl)).data;
-  logger.debug(`Subscription: ${JSON.stringify(devices)}`);
-  const pushSubscription = devices[name];
-
-  webpush.setGCMAPIKey(process.env.FCM_API_KEY);
-  webpush.setVapidDetails(
-    `mailto:${process.env.OPERATOR_MAIL}`,
-    process.env.VAPID_PUBLIC_KEY,
-    process.env.VAPID_PRIVATE_KEY
-  );
-  webpush.sendNotification(pushSubscription, JSON.stringify(payload));
+  await PushNotification.sendNotification(clientName, {
+    title: payload.title,
+    body: payload.body
+  });
 
   res.sendStatus(200);
 };
