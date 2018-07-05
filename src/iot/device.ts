@@ -53,3 +53,5 @@ export class IotDevice {
     });
   }
 }
+
+export const iotDevice = new IotDevice();

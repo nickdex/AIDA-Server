@@ -44,9 +44,10 @@ app.get('/devices', webController.devices);
 app.post('/web', webController.iot);
 // #endregion
 
-//#region Web Push Notifications
+// #region Web Push Notifications
 app.post('/push', pushController.index);
-app.post('/push/send/:name', pushController.send);
+app.post('/push/click', pushController.click);
+app.post('/push/:name', pushController.send);
 //#endregion
 
 // #region App Router
