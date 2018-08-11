@@ -4,54 +4,48 @@ import { client, IOT_TOPIC, SERVER_TOPIC } from './mqtt';
 
 import { logger } from '../logger';
 
-/**
- * It can send a message to listening iot device on Server topic.
- * It listens to messages on the iot topic from the devices.
- * @export
- * @class IotDevice
- */
-export class IotDevice {
-  private client: MqttClient;
+export namespace IotDevice {
+  var mqttClient: MqttClient = null;
 
-  constructor() {
-    this.client = client;
-    this.client.subscribe(IOT_TOPIC);
-  }
+  const init = () => {
+    if (mqttClient == null) {
+      mqttClient = client;
+      mqttClient.subscribe(IOT_TOPIC);
+    }
+  };
 
-  public send(payload: IotPayload): Promise<string> {
-    return new Promise((resolve, reject) => {
-      if (this.client.connected) {
-        logger.verbose('Client is connected');
-        logger.verbose(
-          `Topic: ${SERVER_TOPIC} | Payload sent: ${JSON.stringify(payload)}`
-        );
+  export const send = async (payload: IotPayload) => {
+    init();
 
-        this.client.publish(
-          SERVER_TOPIC,
-          JSON.stringify(payload),
-          (err, packet) => {
-            client.once('message', (topic, dataBuffer, incomingData) => {
-              const message: any = JSON.parse(dataBuffer.toString());
-              logger.verbose(
-                `Topic: ${topic} | Message Received: ${JSON.stringify(message)}`
-              );
+    if (mqttClient.connected) {
+      logger.verbose('Client is connected');
+      logger.verbose(
+        `Topic: ${SERVER_TOPIC} | Payload sent: ${JSON.stringify(payload)}`
+      );
 
-              if (message.sender === 'iot') {
-                resolve(message.message);
-              }
-            });
+      mqttClient.publish(
+        SERVER_TOPIC,
+        JSON.stringify(payload),
+        (err, packet) => {
+          client.once('message', (topic, dataBuffer, incomingData) => {
+            const message: any = JSON.parse(dataBuffer.toString());
+            logger.verbose(
+              `Topic: ${topic} | Message Received: ${JSON.stringify(message)}`
+            );
 
-            if (err) {
-              reject(err.message);
+            if (message.sender === 'iot') {
+              return message.message;
             }
-          }
-        );
-      } else if (!this.client.reconnecting) {
-        this.client.reconnect();
-        reject('Reconnecting Please try later');
-      }
-    });
-  }
-}
+          });
 
-export const iotDevice = new IotDevice();
+          if (err) {
+            throw new Error(err.message);
+          }
+        }
+      );
+    } else if (!mqttClient.reconnecting) {
+      mqttClient.reconnect();
+      throw new Error('Reconnecting Please try later');
+    }
+  };
+}

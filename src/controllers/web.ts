@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { iotDevice } from '../iot/device';
+import { IotDevice } from '../iot/device';
 import { IotPayload } from '../iot/payload';
 import { DeviceService } from '../service';
 
@@ -22,8 +22,7 @@ export let iot = (req: Request, res: Response) => {
 
   const payload: IotPayload = { ...req.body };
 
-  iotDevice
-    .send(payload)
+  IotDevice.send(payload)
     .then(result => {
       logger.info(
         `Message sent successfully. Result: ${JSON.stringify(result)}`
