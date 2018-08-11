@@ -3,9 +3,12 @@
     "autoload",
     "cloudmqtt",
     "feathersjs",
+    "gcmapi",
+    "key",
     "nospace",
     "onespace",
-    "quotemark"
+    "quotemark",
+    "set"
   ],
   "editor.tabSize": 2
 }

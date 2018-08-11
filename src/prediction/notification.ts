@@ -1,4 +1,4 @@
-import * as webpush from 'web-push';
+import * as webPush from 'web-push';
 
 import { logger } from '../logger';
 
@@ -23,14 +23,14 @@ export namespace PushNotification {
   };
 
   const send = async (clientName, payload) => {
-    webpush.setGCMAPIKey(process.env.FCM_API_KEY);
-    webpush.setVapidDetails(
+    webPush.setGCMAPIKey(process.env.FCM_API_KEY);
+    webPush.setVapidDetails(
       `mailto:${process.env.OPERATOR_MAIL}`,
       process.env.VAPID_PUBLIC_KEY,
       process.env.VAPID_PRIVATE_KEY
     );
     const subscription = await getClientSubscription(clientName);
-    webpush.sendNotification(subscription, JSON.stringify(payload));
+    webPush.sendNotification(subscription, JSON.stringify(payload));
   };
 
   export const sendNotification = async (
