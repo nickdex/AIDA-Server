@@ -14,38 +14,39 @@ export namespace IotDevice {
     }
   };
 
-  export const send = async (payload: IotPayload) => {
+  export const send = (payload: IotPayload) => {
     init();
+    return new Promise((resolve, reject) => {
+      if (mqttClient.connected) {
+        logger.verbose('Client is connected');
+        logger.verbose(
+          `Topic: ${SERVER_TOPIC} | Payload sent: ${JSON.stringify(payload)}`
+        );
 
-    if (mqttClient.connected) {
-      logger.verbose('Client is connected');
-      logger.verbose(
-        `Topic: ${SERVER_TOPIC} | Payload sent: ${JSON.stringify(payload)}`
-      );
-
-      mqttClient.publish(
-        SERVER_TOPIC,
-        JSON.stringify(payload),
-        (err, packet) => {
-          client.once('message', (topic, dataBuffer, incomingData) => {
-            const message: any = JSON.parse(dataBuffer.toString());
-            logger.verbose(
-              `Topic: ${topic} | Message Received: ${JSON.stringify(message)}`
-            );
-
-            if (message.sender === 'iot') {
-              return message.message;
+        mqttClient.publish(
+          SERVER_TOPIC,
+          JSON.stringify(payload),
+          (err, packet) => {
+            if (err) {
+              reject(err.message);
             }
-          });
 
-          if (err) {
-            throw new Error(err.message);
+            client.once('message', (topic, dataBuffer, incomingData) => {
+              const message: any = JSON.parse(dataBuffer.toString());
+              logger.verbose(
+                `Topic: ${topic} | Message Received: ${JSON.stringify(message)}`
+              );
+
+              if (message.sender === 'iot') {
+                resolve(message.message);
+              }
+            });
           }
-        }
-      );
-    } else if (!mqttClient.reconnecting) {
-      mqttClient.reconnect();
-      throw new Error('Reconnecting Please try later');
-    }
+        );
+      } else if (!mqttClient.reconnecting) {
+        mqttClient.reconnect();
+        reject('Reconnecting Please try later');
+      }
+    });
   };
 }
