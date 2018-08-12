@@ -10,7 +10,7 @@
     "url": "https://github.com/nickdex/Jarvis-Server/issues"
   },
   "engines": {
-    "node": "~8.11"
+    "node": ">=8"
   },
   "scripts": {
     "start": "node dist/server.js",
@@ -31,6 +31,7 @@
   "dependencies": {
     "@feathersjs/express": "^1.2.0",
     "@feathersjs/feathers": "^3.1.7",
+    "axios": "^0.18.0",
     "body-parser": "^1.18.2",
     "cors": "^2.8.4",
     "dotenv": "^6.0.0",
@@ -43,6 +44,7 @@
     "pug": "^2.0.0-rc.4",
     "tslib": "~1.9.3",
     "typescript": "^2.9.2",
+    "web-push": "^3.3.2",
     "winston": "^3.0.0"
   },
   "devDependencies": {

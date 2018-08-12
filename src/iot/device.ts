@@ -2,34 +2,36 @@ import { MqttClient } from 'mqtt';
 import { IotPayload } from '../iot/payload';
 import { client, IOT_TOPIC, SERVER_TOPIC } from './mqtt';
 
-import logger from '../logger';
+import { logger } from '../logger';
 
-/**
- * It can send a message to listening iot device on Server topic.
- * It listens to messages on the iot topic from the devices.
- * @export
- * @class IotDevice
- */
-export class IotDevice {
-  private client: MqttClient;
+export namespace IotDevice {
+  let mqttClient: MqttClient = null;
 
-  constructor() {
-    this.client = client;
-    this.client.subscribe(IOT_TOPIC);
-  }
+  const init = () => {
+    if (mqttClient == null) {
+      mqttClient = client;
+      mqttClient.subscribe(IOT_TOPIC);
+    }
+  };
 
-  public send(payload: IotPayload): Promise<string> {
+  export const send = (payload: IotPayload) => {
+    init();
+
     return new Promise((resolve, reject) => {
-      if (this.client.connected) {
+      if (mqttClient.connected) {
         logger.verbose('Client is connected');
         logger.verbose(
           `Topic: ${SERVER_TOPIC} | Payload sent: ${JSON.stringify(payload)}`
         );
 
-        this.client.publish(
+        mqttClient.publish(
           SERVER_TOPIC,
           JSON.stringify(payload),
           (err, packet) => {
+            if (err) {
+              reject(err.message);
+            }
+
             client.once('message', (topic, dataBuffer, incomingData) => {
               const message: any = JSON.parse(dataBuffer.toString());
               logger.verbose(
@@ -40,16 +42,12 @@ export class IotDevice {
                 resolve(message.message);
               }
             });
-
-            if (err) {
-              reject(err.message);
-            }
           }
         );
-      } else if (!this.client.reconnecting) {
-        this.client.reconnect();
+      } else if (!mqttClient.reconnecting) {
+        mqttClient.reconnect();
         reject('Reconnecting Please try later');
       }
     });
-  }
+  };
 }

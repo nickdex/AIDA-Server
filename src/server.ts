@@ -1,5 +1,5 @@
 import { Server } from 'http';
-import logger from './logger';
+import { logger } from './logger';
 
 import * as app from './app';
 

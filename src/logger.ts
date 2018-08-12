@@ -6,8 +6,17 @@ const logFormat = winston.format.printf(info => {
   }`;
 });
 
-const logger = winston.createLogger({
+const levels = {
+  error: 0,
+  warn: 1,
+  info: 2,
+  debug: 3,
+  verbose: 4
+};
+
+export const logger = winston.createLogger({
   level: 'verbose',
+  levels: levels,
   transports: [new winston.transports.File({ filename: 'app.log' })],
   format: winston.format.combine(
     winston.format.label({ label: 'jarvis-server' }),
@@ -32,5 +41,3 @@ if (process.env.NODE_ENV !== 'production') {
     })
   );
 }
-
-export default logger;

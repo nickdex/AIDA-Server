@@ -1,12 +1,10 @@
 import { Application } from '@feathersjs/express';
 import { Params, Service } from '@feathersjs/feathers';
-import logger from './logger';
-
-import * as feathersNedb from 'feathers-nedb';
-
 import { DevicePin } from './constants';
+import { logger } from './logger';
 import { Device } from './model/device';
 
+import * as feathersNedb from 'feathers-nedb';
 import * as nedb from 'nedb';
 
 export namespace DeviceService {

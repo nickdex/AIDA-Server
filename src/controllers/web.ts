@@ -3,7 +3,7 @@ import { IotDevice } from '../iot/device';
 import { IotPayload } from '../iot/payload';
 import { DeviceService } from '../service';
 
-import logger from '../logger';
+import { logger } from '../logger';
 
 /**
  * GET /
@@ -20,13 +20,9 @@ export const devices = async (req: Request, res: Response) => {
 export let iot = (req: Request, res: Response) => {
   logger.info(`Request received: ${JSON.stringify(req.body)}`);
 
-  const iotDevice = new IotDevice();
-  logger.verbose('MQTT object created');
-
   const payload: IotPayload = { ...req.body };
 
-  iotDevice
-    .send(payload)
+  IotDevice.send(payload)
     .then(result => {
       logger.info(
         `Message sent successfully. Result: ${JSON.stringify(result)}`

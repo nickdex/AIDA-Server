@@ -4,8 +4,8 @@ import * as dotenv from 'dotenv';
 import * as morgan from 'morgan';
 import * as path from 'path';
 
-import logger from './logger';
 import feathers from '@feathersjs/feathers';
+import { logger } from './logger';
 
 // Load environment variables from .env file, where API keys and passwords are configured
 dotenv.config({ path: 'env/.env' });
@@ -13,7 +13,10 @@ logger.verbose('Environment file loaded');
 
 // Controllers (route handlers)
 import * as agentController from './controllers/agent';
+import * as pushController from './controllers/push';
 import * as webController from './controllers/web';
+
+// Services
 import { DeviceService } from './service';
 
 // Create Express server
@@ -42,6 +45,12 @@ app.get('/', webController.index);
 app.get('/devices', webController.devices);
 app.post('/web', webController.iot);
 // #endregion
+
+// #region Web Push Notifications
+app.post('/push', pushController.index);
+app.post('/push/click', pushController.click);
+app.post('/push/:name', pushController.send);
+//#endregion
 
 // #region App Router
 app.post('/agent', agentController.agent);
