@@ -1,4 +1,4 @@
-import * as webpush from 'web-push';
+import * as webPush from 'web-push';
 
 import { Request, Response } from 'express';
 import { IotDevice } from '../iot/device';
@@ -61,13 +61,13 @@ export const send = async (req: Request, res: Response) => {
   logger.debug(`Subscription: ${JSON.stringify(devices)}`);
   const pushSubscription = devices[name];
 
-  webpush.setGCMAPIKey(process.env.FCM_API_KEY);
-  webpush.setVapidDetails(
+  webPush.setGCMAPIKey(process.env.FCM_API_KEY);
+  webPush.setVapidDetails(
     `mailto:${process.env.OPERATOR_MAIL}`,
     process.env.VAPID_PUBLIC_KEY,
     process.env.VAPID_PRIVATE_KEY
   );
-  webpush.sendNotification(pushSubscription, JSON.stringify(payload));
+  webPush.sendNotification(pushSubscription, JSON.stringify(payload));
 
   res.sendStatus(200);
 };

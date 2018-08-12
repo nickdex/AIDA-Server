@@ -5,7 +5,7 @@ import { client, IOT_TOPIC, SERVER_TOPIC } from './mqtt';
 import { logger } from '../logger';
 
 export namespace IotDevice {
-  var mqttClient: MqttClient = null;
+  let mqttClient: MqttClient = null;
 
   const init = () => {
     if (mqttClient == null) {
@@ -16,6 +16,7 @@ export namespace IotDevice {
 
   export const send = (payload: IotPayload) => {
     init();
+
     return new Promise((resolve, reject) => {
       if (mqttClient.connected) {
         logger.verbose('Client is connected');
