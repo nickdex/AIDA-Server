@@ -2,7 +2,7 @@ import { Application } from '@feathersjs/express';
 import { Params, Service } from '@feathersjs/feathers';
 import { DevicePin } from './constants';
 import { logger } from './logger';
-import { Device } from './model/device';
+import { NedbDevice } from './model/nedbdevice';
 
 import * as feathersNedb from 'feathers-nedb';
 import * as nedb from 'nedb';
@@ -12,22 +12,22 @@ export namespace DeviceService {
     filename: './data/devices.db',
     autoload: true
   });
-  let deviceService: Service<Device>;
+  let deviceService: Service<NedbDevice>;
 
   export async function patch(
     id: number,
-    data: Partial<Device>,
+    data: Partial<NedbDevice>,
     params?: Params
   ) {
     return deviceService.patch(id, data, params);
   }
 
   export async function find() {
-    return <Device[]>await deviceService.find();
+    return <NedbDevice[]>await deviceService.find();
   }
 
   export function initDb(app: Application<object>) {
-    app.use('devices', feathersNedb<Device>({ Model: model }));
+    app.use('devices', feathersNedb<NedbDevice>({ Model: model }));
     deviceService = app.service('devices');
 
     deviceService
@@ -44,6 +44,6 @@ export namespace DeviceService {
           name: 'Outdoor Lights'
         }
       ])
-      .catch(err => logger.error('Db already exists'));
+      .catch(err => logger.info('Db already exists'));
   }
 }
