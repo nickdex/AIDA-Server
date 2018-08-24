@@ -4,6 +4,7 @@
     "cloudmqtt",
     "feathersjs",
     "gcmapi",
+    "nedbdevice",
     "nospace",
     "onespace",
     "printf",
