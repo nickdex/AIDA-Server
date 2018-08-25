@@ -10,6 +10,20 @@ import { logger } from '../logger';
 const kvUrl = process.env.KV_PUSH_URL;
 
 /**
+ * GET /push/:name
+ * @param req Express Request
+ * @param res Express Response
+ */
+export const isSubscribed = async (req: Request, res: Response) => {
+  const pushData = (await axios.get(kvUrl)).data;
+  if (pushData == null || pushData[req.params.name] == null) {
+    return res.json({ isSubscribed: false });
+  }
+
+  return res.json({ isSubscribed: true });
+};
+
+/**
  * POST /push
  * @param req Express Request
  * @param res Express Response
@@ -26,6 +40,11 @@ export const index = async (req: Request, res: Response) => {
   res.sendStatus(200);
 };
 
+/**
+ * POST /push/click
+ * @param req Express Request
+ * @param res Express Response
+ */
 export const click = async (req: Request, res: Response) => {
   const action = req.body.action;
   logger.debug(`User clicked: ${action}`);
@@ -42,6 +61,11 @@ export const click = async (req: Request, res: Response) => {
   res.sendStatus(200);
 };
 
+/**
+ * POST /push/:name
+ * @param req Express Request
+ * @param res Express Response
+ */
 export const send = async (req: Request, res: Response) => {
   const name = req.params.name;
   const payload = req.body;

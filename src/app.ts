@@ -47,6 +47,7 @@ app.post('/web', webController.iot);
 // #endregion
 
 // #region Web Push Notifications
+app.get('/push/:name', pushController.isSubscribed);
 app.post('/push', pushController.index);
 app.post('/push/click', pushController.click);
 app.post('/push/:name', pushController.send);
