@@ -1,13 +1,13 @@
 {
-  "name": "jarvis-server",
+  "name": "aida-server",
   "version": "0.1.0",
   "description": "Server to control all requests directed to my IoT devices in home",
   "main": "./dist/server.js",
   "author": "Nikhil Warke",
   "license": "MIT",
-  "repository": "https://github.com/nickdex/Jarvis-Server.git",
+  "repository": "https://github.com/nickdex/AIDA-Server.git",
   "bugs": {
-    "url": "https://github.com/nickdex/Jarvis-Server/issues"
+    "url": "https://github.com/nickdex/AIDA-Server/issues"
   },
   "engines": {
     "node": ">=8"
