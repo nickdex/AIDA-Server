@@ -23,23 +23,22 @@ export const devices = async (req: Request, res: Response) => {
   res.json(payload);
 };
 
-export let iot = (req: Request, res: Response) => {
+export let iot = async (req: Request, res: Response) => {
   logger.info(`Request received: ${JSON.stringify(req.body)}`);
 
   const payload: IotPayload = { ...req.body };
 
-  DeviceService.patch(payload.device, {
-    isOn: payload.action === 'on' ? true : false
-  });
+  try {
+    const result = await IotDevice.send(payload);
+    logger.info(`Message sent successfully. Result: ${JSON.stringify(result)}`);
 
-  IotDevice.send(payload)
-    .then(result => {
-      logger.info(
-        `Message sent successfully. Result: ${JSON.stringify(result)}`
-      );
-      res.send(result);
-    })
-    .catch(reason => {
-      logger.error(`Sending to IOT failed\n${reason}`);
+    await DeviceService.patch(payload.device, {
+      isOn: payload.action === 'on' ? true : false
     });
+
+    res.send({ id: payload.device, isSuccess: true });
+  } catch (error) {
+    logger.error(`Sending to IOT failed\n${error}`);
+    res.send({ id: payload.device, isSuccess: false });
+  }
 };
