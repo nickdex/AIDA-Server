@@ -1,7 +1,7 @@
 import * as webPush from 'web-push';
 
 import { Request, Response } from 'express';
-import { IotDevice } from '../iot/device';
+import { Mqtt } from '../iot/device';
 import { IotPayload } from '../iot/payload';
 
 import axios from 'axios';
@@ -52,10 +52,10 @@ export const click = async (req: Request, res: Response) => {
   // Execute action using mqtt
   const payload: IotPayload = {
     action,
-    device: 2, // TODO: Use from predictive model
+    device: 2, // Fan demo
     sender: 'server'
   };
-  const response = await IotDevice.send(payload);
+  const response = await Mqtt.send(payload);
   logger.info(`Mqtt message send successfully. Response: ${response}`);
 
   res.sendStatus(200);

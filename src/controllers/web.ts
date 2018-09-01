@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { IotDevice } from '../iot/device';
+import { Mqtt } from '../iot/device';
 import { IotPayload } from '../iot/payload';
 import { DeviceService } from '../service';
 
@@ -29,7 +29,7 @@ export let iot = async (req: Request, res: Response) => {
   const payload: IotPayload = { ...req.body };
 
   try {
-    const result = await IotDevice.send(payload);
+    const result = await Mqtt.send(payload);
     logger.info(`Message sent successfully. Result: ${JSON.stringify(result)}`);
 
     await DeviceService.patch(payload.device, {

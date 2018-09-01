@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { find } from 'lodash';
 import { DevicePin } from '../constants';
-import { IotDevice } from '../iot/device';
+import { Mqtt } from '../iot/device';
 import { IotPayload } from '../iot/payload';
 import { DeviceService } from '../service';
 
@@ -83,7 +83,7 @@ export let agent = (req: Request, res: Response) => {
     .then(item => logger.info(`DB Update: ${JSON.stringify(item)}`))
     .catch(reason => logger.error(`DB update failed: ${reason}`));
 
-  IotDevice.send(payload)
+  Mqtt.send(payload)
     .then(response => {
       res.send(JSON.stringify({ speech: response, displayText: response }));
     })

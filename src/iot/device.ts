@@ -4,7 +4,7 @@ import { client, IOT_TOPIC, SERVER_TOPIC } from './mqtt';
 
 import { logger } from '../logger';
 
-export namespace IotDevice {
+export namespace Mqtt {
   let mqttClient: MqttClient = null;
 
   const init = () => {
