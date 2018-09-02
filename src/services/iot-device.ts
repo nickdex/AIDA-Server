@@ -1,8 +1,8 @@
 import { Params } from '@feathersjs/feathers';
+import axios from 'axios';
+
 import { logger } from '../logger';
 import { IIotDevice } from '../model/iot-device';
-
-import axios from 'axios';
 
 const deviceUrl = process.env.IOT_DEVICE_DATA_URL;
 
@@ -17,12 +17,16 @@ export class IotDeviceService {
       throw new Error(message);
     }
 
+    if (!devices[username]) {
+      return [];
+    }
+
     return devices[username];
   }
 
   // tslint:disable no-reserved-keywords
   public async get(id: string, params: Params) {
-    const devices = this.getDevices();
+    const devices = await this.getDevices();
 
     const username = params.query.username;
 
@@ -31,12 +35,6 @@ export class IotDeviceService {
       logger.warn(message);
       throw new Error(message);
     }
-
-    logger.debug('Get IotDevice request', {
-      name: id,
-      username: username,
-      room: params.query.room
-    });
 
     const iotDevices: IIotDevice[] = devices[username];
 
@@ -61,6 +59,7 @@ export class IotDeviceService {
       logger.warn(message);
       throw new Error(message);
     }
+
     if (!data.room || !data.name || !data.pin) {
       const message = 'Creating device failed. Need pin, name and room';
       logger.warn(message, {
@@ -69,6 +68,10 @@ export class IotDeviceService {
         pin: data.pin
       });
       throw new Error(message);
+    }
+
+    if (!devices[username]) {
+      devices[username] = [];
     }
 
     devices[username].push(data);
@@ -88,6 +91,7 @@ export class IotDeviceService {
       logger.warn(message);
       throw new Error(message);
     }
+
     const iotDevices: IIotDevice[] = devices[username];
 
     for (let index = 0; index < iotDevices.length; index += 1) {
@@ -119,6 +123,7 @@ export class IotDeviceService {
       logger.warn(message);
       throw new Error(message);
     }
+
     const iotDevices: IIotDevice[] = devices[username];
 
     for (let index = 0; index < iotDevices.length; index += 1) {

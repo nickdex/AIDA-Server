@@ -1,20 +1,15 @@
 import { Params } from '@feathersjs/feathers';
+import axios from 'axios';
+
 import { logger } from '../logger';
 import { IUser } from '../model/user';
-
-import axios from 'axios';
 
 const userUrl = process.env.USER_DATA_URL;
 
 export class UserService {
   // tslint:disable no-reserved-keywords
   public async get(id: string, params: Params) {
-    const users = this.getUsers();
-
-    logger.debug('Get User request', {
-      username: id,
-      password: params.query.password
-    });
+    const users = await this.getUsers();
 
     const user: IUser = users[id];
     if (user.password === params.query.password) {
@@ -26,7 +21,7 @@ export class UserService {
     throw new Error(message);
   }
 
-  public async create(data: IUser, params: Params) {
+  public async create(data: IUser) {
     const users = await this.getUsers();
     users[data.username] = data;
 

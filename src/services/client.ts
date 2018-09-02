@@ -1,20 +1,24 @@
 import { Params } from '@feathersjs/feathers';
+import axios from 'axios';
+
 import { logger } from '../logger';
 import { IClient } from '../model/client';
-
-import axios from 'axios';
 
 const clientUrl = process.env.CLIENT_DATA_URL;
 
 export class ClientService {
-  public async find(params: Params) {
+  public async find(params: Params): Promise<IClient[]> {
     const clients = await this.getClients();
     const username = params.query.username;
 
     if (!username) {
       const message = 'Need username to fetch clients';
-      logger.warn(message);
+      logger.warn(message, params.query);
       throw new Error(message);
+    }
+
+    if (!clients[username]) {
+      return [];
     }
 
     return clients[username];
@@ -22,7 +26,7 @@ export class ClientService {
 
   // tslint:disable no-reserved-keywords
   public async get(id: string, params: Params) {
-    const clients = this.getClients();
+    const clients = await this.getClients();
 
     const username = params.query.username;
 
@@ -64,6 +68,7 @@ export class ClientService {
       });
       throw new Error(message);
     }
+
     if (!data.name || !data.deviceType) {
       const message = 'Creating client failed. Need name and device type';
       logger.warn(message, {
@@ -71,6 +76,10 @@ export class ClientService {
         deviceType: data.deviceType
       });
       throw new Error(message);
+    }
+
+    if (!clients[username]) {
+      clients[username] = [];
     }
 
     clients[username].push(data);
@@ -93,6 +102,7 @@ export class ClientService {
       });
       throw new Error(message);
     }
+
     const userClients: IClient[] = clients[username];
 
     for (let index = 0; index < userClients.length; index += 1) {
@@ -127,6 +137,7 @@ export class ClientService {
       });
       throw new Error(message);
     }
+
     const userClients: IClient[] = clients[username];
 
     for (let index = 0; index < userClients.length; index += 1) {
