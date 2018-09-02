@@ -1,10 +1,36 @@
-import { Params } from '@feathersjs/feathers';
+import { HookContext, HooksObject, Params } from '@feathersjs/feathers';
 import axios from 'axios';
 
+import { Mqtt } from '../iot/mqtt';
 import { logger } from '../logger';
 import { IIotDevice } from '../model/iot-device';
 
 const deviceUrl = process.env.IOT_DEVICE_DATA_URL;
+
+export const iotDeviceHooks: Partial<HooksObject> = {
+  before: {
+    async update(context: HookContext) {
+      if (!context.params.query.username) {
+        const message = 'Need username to update devices';
+        logger.warn(message);
+
+        throw new Error(message);
+      }
+
+      const data: IIotDevice = context.data;
+      const result = await Mqtt.send({
+        action: data.isOn ? 'on' : 'off',
+        device: data.pin,
+        sender: 'server'
+      });
+      logger.info(result);
+
+      context.params.query.mqttMessage = result;
+
+      return context;
+    }
+  }
+};
 
 export class IotDeviceService {
   public async find(params: Params) {
@@ -82,16 +108,14 @@ export class IotDeviceService {
   }
 
   public async update(id: string, data: IIotDevice, params: Params) {
-    const devices = await this.getDevices();
-
-    const username = params.query.username;
-
-    if (!username) {
-      const message = 'Need username to update devices';
+    if (params.query.mqttMessage !== 'done') {
+      const message = 'Failed to receive ack from iot device';
       logger.warn(message);
       throw new Error(message);
     }
 
+    const devices = await this.getDevices();
+    const username = params.query.username;
     const iotDevices: IIotDevice[] = devices[username];
 
     for (let index = 0; index < iotDevices.length; index += 1) {
