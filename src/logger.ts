@@ -19,7 +19,7 @@ export const logger = winston.createLogger({
   levels: levels,
   transports: [new winston.transports.File({ filename: 'app.log' })],
   format: winston.format.combine(
-    winston.format.label({ label: 'jarvis-server' }),
+    winston.format.label({ label: 'aida-server' }),
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
     logFormat
   )
@@ -30,7 +30,7 @@ if (process.env.NODE_ENV !== 'production') {
     new winston.transports.Console({
       format: winston.format.combine(
         winston.format.colorize(),
-        winston.format.label({ label: 'jarvis-server' }),
+        winston.format.label({ label: 'aida-server' }),
         winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss' }),
         winston.format.printf(info => {
           return `${info.timestamp} [${info.label}] ${info.level}: ${
