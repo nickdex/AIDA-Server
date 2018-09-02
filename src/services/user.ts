@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const userUrl = process.env.USER_DATA_URL;
 
-export class UserServices {
+export class UserService {
   // tslint:disable no-reserved-keywords
   public async get(id: string, params: Params) {
     const users = this.getUsers();
