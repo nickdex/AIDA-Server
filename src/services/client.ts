@@ -77,7 +77,7 @@ export class ClientService {
     return data;
   }
 
-  public async update(id: string, data: IClient, params: Params) {
+  public async patch(id: string, data: IClient, params: Params) {
     const clients = await this.getClients();
     const username = params.query.username;
     const userClients: IClient[] = clients[username];
@@ -85,7 +85,9 @@ export class ClientService {
     for (let index = 0; index < userClients.length; index += 1) {
       const client = userClients[index];
       if (client.name === id && client.deviceType === data.deviceType) {
-        clients[username][index] = data;
+        // Only update subscription token, as other fields are auto populated
+        client.subscriptionToken = data.subscriptionToken;
+        clients[username][index] = client;
         await this.updateClients(clients);
 
         return data;
