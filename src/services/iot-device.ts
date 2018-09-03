@@ -9,25 +9,47 @@ const deviceUrl = process.env.IOT_DEVICE_DATA_URL;
 
 export const iotDeviceHooks: Partial<HooksObject> = {
   before: {
-    async update(context: HookContext) {
+    all(context: HookContext) {
       if (!context.params.query.username) {
-        const message = 'Need username to update devices';
-        logger.warn(message);
+        const message = 'Username not available';
+        logger.warn(message, { username: context.params.query.username });
 
         throw new Error(message);
       }
-
+    },
+    async update(context: HookContext) {
       const data: IIotDevice = context.data;
       const result = await Mqtt.send({
         action: data.isOn ? 'on' : 'off',
         device: data.pin,
         sender: 'server'
       });
-      logger.info(result);
+      logger.debug('Iot device response', result);
 
-      context.params.query.mqttMessage = result;
+      // Only if mqtt action was successful, save the state
+      if (result !== 'done') {
+        const message = 'Failed to receive ack from iot device';
+        logger.warn(message);
+        throw new Error(message);
+      }
 
       return context;
+    },
+    create(context: HookContext) {
+      const data = context.data;
+
+      if (!data.room || !data.name || !data.pin) {
+        const message = 'Creating device failed. Need pin, name and room';
+        logger.warn(message, {
+          name: data.name,
+          room: data.room,
+          pin: data.pin
+        });
+        throw new Error(message);
+      }
+
+      // Default state when creating
+      context.data.isOn = false;
     }
   }
 };
@@ -36,12 +58,6 @@ export class IotDeviceService {
   public async find(params: Params) {
     const devices = await this.getDevices();
     const username = params.query.username;
-
-    if (!username) {
-      const message = 'Need username to fetch devices';
-      logger.warn(message);
-      throw new Error(message);
-    }
 
     if (!devices[username]) {
       return [];
@@ -53,15 +69,7 @@ export class IotDeviceService {
   // tslint:disable no-reserved-keywords
   public async get(id: string, params: Params) {
     const devices = await this.getDevices();
-
     const username = params.query.username;
-
-    if (!username) {
-      const message = 'Need username to get devices';
-      logger.warn(message);
-      throw new Error(message);
-    }
-
     const iotDevices: IIotDevice[] = devices[username];
 
     for (const iotDevice of iotDevices) {
@@ -69,32 +77,15 @@ export class IotDeviceService {
         return iotDevice;
       }
     }
-    {
-      const message = 'Iot Device not found. Please check name and room again';
-      logger.warn(message);
-      throw new Error(message);
-    }
+
+    const message = 'Iot Device not found. Please check name and room again';
+    logger.warn(message, { name: id, room: params.query.room, username });
+    throw new Error(message);
   }
 
   public async create(data: IIotDevice, params: Params) {
     const devices = await this.getDevices();
     const username = params.query.username;
-
-    if (!username) {
-      const message = 'Need username to create devices';
-      logger.warn(message);
-      throw new Error(message);
-    }
-
-    if (!data.room || !data.name || !data.pin) {
-      const message = 'Creating device failed. Need pin, name and room';
-      logger.warn(message, {
-        name: data.name,
-        room: data.room,
-        pin: data.pin
-      });
-      throw new Error(message);
-    }
 
     if (!devices[username]) {
       devices[username] = [];
@@ -108,12 +99,6 @@ export class IotDeviceService {
   }
 
   public async update(id: string, data: IIotDevice, params: Params) {
-    if (params.query.mqttMessage !== 'done') {
-      const message = 'Failed to receive ack from iot device';
-      logger.warn(message);
-      throw new Error(message);
-    }
-
     const devices = await this.getDevices();
     const username = params.query.username;
     const iotDevices: IIotDevice[] = devices[username];
@@ -127,27 +112,19 @@ export class IotDeviceService {
         return data;
       }
     }
-    {
-      const message = 'Iot Device not found. Please check name and room again';
-      logger.warn(message, {
-        name: id,
-        room: params.query.room,
-        pin: params.query.pin
-      });
-      throw new Error(message);
-    }
+
+    const message = 'Iot Device not found. Please check name and room again';
+    logger.warn(message, {
+      name: id,
+      room: params.query.room,
+      pin: params.query.pin
+    });
+    throw new Error(message);
   }
 
   public async remove(id: string, params: Params) {
     const devices = await this.getDevices();
     const username = params.query.username;
-
-    if (!username) {
-      const message = 'Need username to remove devices';
-      logger.warn(message);
-      throw new Error(message);
-    }
-
     const iotDevices: IIotDevice[] = devices[username];
 
     for (let index = 0; index < iotDevices.length; index += 1) {
@@ -162,15 +139,14 @@ export class IotDeviceService {
         return removed;
       }
     }
-    {
-      const message = 'Iot Device not found. Please check name and room again';
-      logger.warn(message, {
-        name: id,
-        room: params.query.room,
-        pin: params.query.pin
-      });
-      throw new Error(message);
-    }
+
+    const message = 'Iot Device not found. Please check name and room again';
+    logger.warn(message, {
+      name: id,
+      room: params.query.room,
+      pin: params.query.pin
+    });
+    throw new Error(message);
   }
 
   private async getDevices() {
