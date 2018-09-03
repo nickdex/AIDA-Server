@@ -1,9 +1,13 @@
+// tslint:disable no-implicit-dependencies
+import { SPLAT } from 'triple-beam';
 import * as winston from 'winston';
 
 const logFormat = winston.format.printf(info => {
-  return `${info.timestamp} [${info.label}] ${info.level.toUpperCase()}: ${
+  const splat = info[SPLAT].map(a => JSON.stringify(a)).join(', ');
+
+  return `${info.timestamp} [${info.label}] ${info.level}: ${
     info.message
-  }`;
+  } | ${splat}`;
 });
 
 const levels = {
