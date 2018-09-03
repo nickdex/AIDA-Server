@@ -17,7 +17,7 @@ import * as agentController from './controllers/agent';
 import { PushController } from './controllers/push';
 
 // Services
-import { ClientService } from './services/client';
+import { clientHooks, ClientService } from './services/client';
 import { iotDeviceHooks, IotDeviceService } from './services/iot-device';
 import { UserService } from './services/user';
 
@@ -47,6 +47,7 @@ app.use('/clients', new ClientService());
 app.use('/devices', new IotDeviceService());
 app.use('/users', new UserService());
 
+app.service('clients').hooks(clientHooks);
 app.service('devices').hooks(iotDeviceHooks);
 logger.verbose('Service initialization complete');
 // #endregion
