@@ -41,9 +41,7 @@ export const iotDeviceHooks: Partial<HooksObject> = {
       if (!data.room || !data.name || !data.pin) {
         const message = 'Creating device failed. Need pin, name and room';
         logger.warn(message, {
-          name: data.name,
-          room: data.room,
-          pin: data.pin
+          ...data
         });
         throw new Error(message);
       }
@@ -116,8 +114,7 @@ export class IotDeviceService {
     const message = 'Iot Device not found. Please check name and room again';
     logger.warn(message, {
       name: id,
-      room: params.query.room,
-      pin: params.query.pin
+      ...params.query
     });
     throw new Error(message);
   }
@@ -143,8 +140,7 @@ export class IotDeviceService {
     const message = 'Iot Device not found. Please check name and room again';
     logger.warn(message, {
       name: id,
-      room: params.query.room,
-      pin: params.query.pin
+      ...params
     });
     throw new Error(message);
   }
