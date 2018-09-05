@@ -1,4 +1,4 @@
-import { SPLAT } from 'triple-beam';
+import { LEVEL, SPLAT } from 'triple-beam';
 import * as winston from 'winston';
 
 const levels = {
@@ -14,7 +14,7 @@ const dateFormat = 'YYYY-MM-DD HH:mm:ss';
 
 const logFormat = winston.format.combine(
   winston.format(info => {
-    info.level = info.level.toUpperCase();
+    info.level = info.level.replace(info[LEVEL], info[LEVEL].toUpperCase());
 
     return info;
   })(),
@@ -45,7 +45,7 @@ export const logger = winston.createLogger({
 if (process.env.NODE_ENV !== 'production') {
   logger.add(
     new winston.transports.Console({
-      format: logFormat
+      format: winston.format.combine(winston.format.colorize(), logFormat)
     })
   );
 }
