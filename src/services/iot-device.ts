@@ -10,9 +10,10 @@ const deviceUrl = process.env.IOT_DEVICE_DATA_URL;
 export const iotDeviceHooks: Partial<HooksObject> = {
   before: {
     all(context: HookContext) {
-      if (!context.params.query.username) {
+      const username = context.params.query.username;
+      if (!username) {
         const message = 'Username not available';
-        logger.warn(message, { username: context.params.query.username });
+        logger.warn(message, { username });
 
         throw new Error(message);
       }
@@ -57,9 +58,7 @@ export const iotDeviceHooks: Partial<HooksObject> = {
 
       if (!data.room || !data.name || !data.pin) {
         const message = 'Creating device failed. Need pin, name and room';
-        logger.warn(message, {
-          ...data
-        });
+        logger.warn(message, data);
         throw new Error(message);
       }
 
@@ -94,7 +93,7 @@ export class IotDeviceService {
     }
 
     const message = 'Iot Device not found. Please check name and room again';
-    logger.warn(message, { name: id, room: params.query.room, username });
+    logger.warn(message, { id }, params.query);
     throw new Error(message);
   }
 
@@ -156,10 +155,7 @@ export class IotDeviceService {
     }
 
     const message = 'Iot Device not found. Please check name and room again';
-    logger.warn(message, {
-      name: id,
-      ...params.query
-    });
+    logger.warn(message, { id }, params.query);
     throw new Error(message);
   }
 
@@ -182,10 +178,7 @@ export class IotDeviceService {
     }
 
     const message = 'Iot Device not found. Please check name and room again';
-    logger.warn(message, {
-      name: id,
-      ...params
-    });
+    logger.warn(message, { id }, params.query);
     throw new Error(message);
   }
 
