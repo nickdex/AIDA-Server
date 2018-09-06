@@ -5,12 +5,13 @@ import * as dotenv from 'dotenv';
 import * as morgan from 'morgan';
 import * as path from 'path';
 
-import { Mqtt } from './iot/mqtt';
 import { logger } from './logger';
 
 // Load environment variables from .env file, where API keys and passwords are configured
 dotenv.config({ path: 'env/.env' });
 logger.verbose('Environment file loaded');
+
+import { Mqtt } from './iot/mqtt';
 
 // Controllers (route handlers)
 import * as agentController from './controllers/agent';
@@ -40,7 +41,7 @@ app.use(cors());
 app.configure(rest());
 
 Mqtt.init();
-logger.verbose('Mqtt Initialized');
+logger.info('Mqtt Initialized');
 
 // #region Service Registration
 app.use('/clients', new ClientService());
