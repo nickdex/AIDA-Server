@@ -143,10 +143,15 @@ export class IotDeviceService {
     for (let index = 0; index < iotDevices.length; index += 1) {
       const iotDevice = iotDevices[index];
       if (iotDevice.name === id && iotDevice.room === data.room) {
-        devices[username][index] = data;
+        // Don't update isOn property
+        iotDevice.name = data.name;
+        iotDevice.pin = data.pin;
+        iotDevice.room = data.room;
+        devices[username][index] = iotDevice;
+
         await this.updateDevices(devices);
 
-        return data;
+        return iotDevice;
       }
     }
 
