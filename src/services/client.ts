@@ -15,6 +15,17 @@ export const clientHooks: Partial<HooksObject> = {
 
         throw new Error(message);
       }
+
+      if (context.id) {
+        context.id =
+          typeof context.id === 'number'
+            ? context.id
+            : context.id.toUpperCase();
+      }
+      const query = context.params.query;
+      if (query && query.deviceType) {
+        context.params.query.deviceType = query.deviceType.toUpperCase();
+      }
     },
     create(context: HookContext) {
       const data: IClient = context.data;
@@ -26,6 +37,11 @@ export const clientHooks: Partial<HooksObject> = {
         });
         throw new Error(message);
       }
+
+      data.deviceType = data.deviceType.toUpperCase();
+      data.name = data.name.toUpperCase();
+
+      context.data = data;
     }
   }
 };
@@ -84,7 +100,7 @@ export class ClientService {
 
     for (let index = 0; index < userClients.length; index += 1) {
       const client = userClients[index];
-      if (client.name === id && client.deviceType === data.deviceType) {
+      if (client.name === id && client.deviceType === params.query.deviceType) {
         // Only update subscription token, as other fields are auto populated
         client.subscriptionToken = data.subscriptionToken;
         clients[username][index] = client;
