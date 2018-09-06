@@ -17,19 +17,36 @@ export const iotDeviceHooks: Partial<HooksObject> = {
         throw new Error(message);
       }
     },
-    async update(context: HookContext) {
+    async patch(context: HookContext) {
       const data: IIotDevice = context.data;
+
+      if (data.isOn == null) {
+        const message = 'Device action is not defined';
+        logger.warn(message, data, context.params.query);
+        throw new Error(message);
+      }
+      if (!data.pin) {
+        const message = 'Device pin is not defined';
+        logger.warn(message, data, context.params.query);
+        throw new Error(message);
+      }
+      if (!context.params.query.room) {
+        const message = 'Device room is not defined';
+        logger.warn(message, data, context.params.query);
+        throw new Error(message);
+      }
+
       const result = await Mqtt.send({
         action: data.isOn ? 'on' : 'off',
         device: data.pin,
         sender: 'server'
       });
-      logger.debug('Iot device response', result);
+      logger.debug('Iot device response', { result });
 
       // Only if mqtt action was successful, save the state
       if (result !== 'done') {
         const message = 'Failed to receive ack from iot device';
-        logger.warn(message);
+        logger.warn(message, { result });
         throw new Error(message);
       }
 
@@ -94,6 +111,28 @@ export class IotDeviceService {
     await this.updateDevices(devices);
 
     return data;
+  }
+
+  public async patch(id: string, data: Partial<IIotDevice>, params: Params) {
+    const devices = await this.getDevices();
+    const username = params.query.username;
+    const iotDevices: IIotDevice[] = devices[username];
+
+    for (let index = 0; index < iotDevices.length; index += 1) {
+      const iotDevice = iotDevices[index];
+      if (iotDevice.name === id && iotDevice.room === params.query.room) {
+        iotDevice.isOn = data.isOn;
+        devices[username][index] = iotDevice;
+
+        await this.updateDevices(devices);
+
+        return iotDevice;
+      }
+    }
+
+    const message = 'Iot Device not found. Please check name and room again';
+    logger.warn(message, { id }, params.query, data);
+    throw new Error(message);
   }
 
   public async update(id: string, data: IIotDevice, params: Params) {
