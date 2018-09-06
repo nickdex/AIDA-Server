@@ -13,7 +13,9 @@ export namespace Mqtt {
   export const init = () => {
     if (mqttClient == null) {
       mqttClient = connect(URL);
-      mqttClient.subscribe(IOT_TOPIC);
+      logger.debug('Mqtt Client connected', URL);
+      mqttClient.subscribe(IOT_TOPIC, null, logger.debug);
+      logger.debug('Mqtt Client subscribed', IOT_TOPIC);
     }
   };
 
@@ -21,7 +23,7 @@ export namespace Mqtt {
     return new Promise((resolve, reject) => {
       if (mqttClient.connected) {
         logger.verbose('Client is connected');
-        logger.verbose(
+        logger.debug(
           `Topic: ${SERVER_TOPIC} | Payload sent: ${JSON.stringify(payload)}`
         );
 
@@ -35,7 +37,7 @@ export namespace Mqtt {
 
             mqttClient.once('message', (topic, dataBuffer, incomingData) => {
               const message: any = JSON.parse(dataBuffer.toString());
-              logger.verbose(
+              logger.debug(
                 `Topic: ${topic} | Message Received: ${JSON.stringify(message)}`
               );
 
