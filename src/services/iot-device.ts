@@ -1,9 +1,17 @@
-import { HookContext, HooksObject, Params } from '@feathersjs/feathers';
+import {
+  Application,
+  HookContext,
+  HooksObject,
+  Params
+} from '@feathersjs/feathers';
 import axios from 'axios';
 
 import { Mqtt } from '../iot/mqtt';
 import { logger } from '../logger';
+import { IDeviceGroup } from '../model/device-group';
 import { IIotDevice } from '../model/iot-device';
+import { IUser } from '../model/user';
+import { Utility } from '../utility';
 
 const deviceUrl = process.env.IOT_DEVICE_DATA_URL;
 
@@ -69,65 +77,57 @@ export const iotDeviceHooks: Partial<HooksObject> = {
 };
 
 export class IotDeviceService {
+  private app: Application;
+  private deviceGroups: IDeviceGroup[];
+
   public async find(params: Params) {
-    const devices = await this.getDevices();
-    const username = params.query.username;
-
-    if (!devices[username]) {
-      return [];
-    }
-
-    return devices[username];
+    return this.getDevices(params.query.username);
   }
 
   // tslint:disable no-reserved-keywords
   public async get(id: string, params: Params) {
-    const devices = await this.getDevices();
-    const username = params.query.username;
-    const iotDevices: IIotDevice[] = devices[username];
+    const iotDevices = await this.getDevices(params.query.username);
 
-    for (const iotDevice of iotDevices) {
-      if (iotDevice.name === id && iotDevice.room === params.query.room) {
-        return iotDevice;
-      }
+    // Get new object by search
+    const iotDevice = iotDevices.filter(
+      d =>
+        Utility.equalsIgnoreCase(d.name, id) &&
+        Utility.equalsIgnoreCase(d.room, params.query.room)
+    )[0];
+
+    if (!iotDevice) {
+      const message = 'Iot Device not found. Please check name and room again';
+      logger.warn(message, { id }, params.query);
+      throw new Error(message);
     }
 
-    const message = 'Iot Device not found. Please check name and room again';
-    logger.warn(message, { id }, params.query);
-    throw new Error(message);
+    return iotDevice;
   }
 
   public async create(data: IIotDevice, params: Params) {
-    const devices = await this.getDevices();
-    const username = params.query.username;
+    const devices = await this.getDevices(params.query.username);
 
-    if (!devices[username]) {
-      devices[username] = [];
-    }
+    devices.push(data);
 
-    devices[username].push(data);
-
-    await this.updateDevices(devices);
+    this.updateDevices();
 
     return data;
   }
 
   public async patch(id: string, data: Partial<IIotDevice>, params: Params) {
-    const devices = await this.getDevices();
-    const username = params.query.username;
-    const iotDevices: IIotDevice[] = devices[username];
+    logger.verbose('Request for device action', { id }, data, params.query);
+    const iotDevices = await this.getDevices(params.query.username);
 
-    for (let index = 0; index < iotDevices.length; index += 1) {
-      const iotDevice = iotDevices[index];
-      if (iotDevice.name === id && iotDevice.room === params.query.room) {
-        iotDevice.isOn = data.isOn;
-        devices[username][index] = iotDevice;
+    const iotDevice = iotDevices.find(
+      d =>
+        Utility.equalsIgnoreCase(d.name, id) &&
+        Utility.equalsIgnoreCase(d.room, params.query.room)
+    );
+    iotDevice.isOn = data.isOn;
 
-        await this.updateDevices(devices);
+    this.updateDevices();
 
-        return iotDevice;
-      }
-    }
+    return iotDevice;
 
     const message = 'Iot Device not found. Please check name and room again';
     logger.warn(message, { id }, params.query, data);
@@ -135,60 +135,109 @@ export class IotDeviceService {
   }
 
   public async update(id: string, data: IIotDevice, params: Params) {
-    const devices = await this.getDevices();
-    const username = params.query.username;
-    const iotDevices: IIotDevice[] = devices[username];
+    const iotDevices = await this.getDevices(params.query.username);
 
-    for (let index = 0; index < iotDevices.length; index += 1) {
-      const iotDevice = iotDevices[index];
-      if (iotDevice.name === id && iotDevice.room === data.room) {
-        // Don't update isOn property
-        iotDevice.name = data.name;
-        iotDevice.pin = data.pin;
-        iotDevice.room = data.room;
-        devices[username][index] = iotDevice;
+    const iotDevice = iotDevices.find(
+      d =>
+        Utility.equalsIgnoreCase(d.name, id) &&
+        Utility.equalsIgnoreCase(d.room, data.room)
+    );
 
-        await this.updateDevices(devices);
-
-        return iotDevice;
-      }
+    if (!iotDevice) {
+      const message = 'Iot Device not found. Please check name and room again';
+      logger.warn(message, { id }, params.query);
+      throw new Error(message);
     }
 
-    const message = 'Iot Device not found. Please check name and room again';
-    logger.warn(message, { id }, params.query);
-    throw new Error(message);
+    // Don't update state (isOn) of device
+    iotDevice.name = data.name;
+    iotDevice.pin = data.pin;
+    iotDevice.room = data.room;
+
+    this.updateDevices();
+
+    return iotDevice;
   }
 
   public async remove(id: string, params: Params) {
-    const devices = await this.getDevices();
-    const username = params.query.username;
-    const iotDevices: IIotDevice[] = devices[username];
+    const iotDevices = await this.getDevices(params.query.username);
 
-    for (let index = 0; index < iotDevices.length; index += 1) {
-      const iotDevice = iotDevices[index];
-      if (iotDevice.name === id && iotDevice.room === params.query.room) {
-        const removed = iotDevices.splice(index, 1)[0];
+    const iotDeviceIndex = iotDevices.findIndex(
+      d =>
+        Utility.equalsIgnoreCase(d.name, id) &&
+        Utility.equalsIgnoreCase(d.room, params.query.room)
+    );
 
-        devices[username] = iotDevices;
-
-        await this.updateDevices(devices);
-
-        return removed;
-      }
+    if (iotDeviceIndex === -1) {
+      const message = 'Iot Device not found. Please check name and room again';
+      logger.warn(message, { id }, params.query);
+      throw new Error(message);
     }
 
-    const message = 'Iot Device not found. Please check name and room again';
-    logger.warn(message, { id }, params.query);
-    throw new Error(message);
+    const removed = iotDevices.splice(iotDeviceIndex, 1)[0];
+
+    this.updateDevices();
+
+    return removed;
   }
 
-  private async getDevices() {
+  public setup(app: Application, path: string): void {
+    this.app = app;
+  }
+
+  private async getDevices(username: string): Promise<IIotDevice[]> {
+    const userGroup = await this.getUserGroup(username);
+    logger.verbose(`Fetched user's group`, { userGroup });
+
+    this.deviceGroups = await this.getDeviceGroups();
+    logger.verbose('Fetched all the devices', this.deviceGroups);
+
+    const deviceGroup = this.deviceGroups.find(g =>
+      Utility.equalsIgnoreCase(g.group, userGroup)
+    );
+
+    if (!deviceGroup) {
+      const message = 'No devices for the requested group. Please add one';
+      logger.info(message, { username }, { userGroup });
+
+      throw new Error(message);
+    }
+
+    return deviceGroup.devices;
+  }
+
+  private async getDeviceGroups(): Promise<IDeviceGroup[]> {
     const result = await axios.get(deviceUrl);
 
     return result.data;
   }
 
-  private async updateDevices(devices: any) {
-    return axios.post(deviceUrl, devices);
+  private async getUserGroup(username: string): Promise<string> {
+    const user: IUser = await this.app.service('users').get(username);
+
+    if (!user) {
+      const message = 'User does not exist';
+      logger.warn(message, { username });
+
+      throw new Error(message);
+    }
+    if (!user.group) {
+      const message = 'User does not belong to any group';
+      logger.warn(message, { username });
+
+      throw new Error(message);
+    }
+
+    return user.group;
+  }
+
+  private async updateDevices() {
+    const result = await axios.post(deviceUrl, this.deviceGroups);
+    logger.debug('Devices persisted successfully', {
+      status: result.status,
+      statusText: result.statusText
+    });
+
+    return result;
   }
 }

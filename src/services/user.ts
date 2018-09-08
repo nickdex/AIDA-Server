@@ -11,14 +11,8 @@ export class UserService {
   public async get(id: string, params: Params) {
     const users = await this.getUsers();
 
-    const user: IUser = users[id];
-    if (user.password === params.query.password) {
-      return users[id];
-    }
-
-    const message = 'User password is incorrect';
-    logger.warn(message);
-    throw new Error(message);
+    // Don't return password
+    return { ...users[id], password: '' };
   }
 
   public async create(data: IUser) {
