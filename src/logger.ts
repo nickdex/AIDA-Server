@@ -36,7 +36,7 @@ const logFormat = winston.format.combine(
 );
 
 export const logger = winston.createLogger({
-  level: 'verbose',
+  level: 'info',
   levels,
   transports: [new winston.transports.File({ filename: 'app.log' })],
   format: logFormat
@@ -48,4 +48,5 @@ if (process.env.NODE_ENV !== 'production') {
       format: winston.format.combine(winston.format.colorize(), logFormat)
     })
   );
+  logger.level = 'verbose';
 }
