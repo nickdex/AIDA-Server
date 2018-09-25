@@ -1,6 +1,6 @@
 {
   "name": "aida-server",
-  "version": "0.1.0",
+  "version": "2.0.0",
   "description": "Server to control all requests directed to my IoT devices in home",
   "main": "./dist/server.js",
   "author": "Nikhil Warke",
