@@ -1,11 +1,8 @@
 import { Request, Response } from 'express';
 import { find } from 'lodash';
 import { DevicePin } from '../constants';
-import { IotDevice } from '../iot/device';
+import { Mqtt } from '../iot/mqtt';
 import { IotPayload } from '../iot/payload';
-import { DeviceService } from '../service';
-
-import { logger } from '../logger';
 
 export const parseActionString = (str: string): any => {
   const intent: string[] = str.split('.');
@@ -77,13 +74,7 @@ const parseIntent = (data: any): IotPayload => {
 export let agent = (req: Request, res: Response) => {
   const payload: IotPayload = parseIntent(req.body.result);
 
-  // DB Update
-  const isOn = payload.action === 'on';
-  DeviceService.patch(payload.device, { isOn: isOn })
-    .then(item => logger.info(`DB Update: ${JSON.stringify(item)}`))
-    .catch(reason => logger.error(`DB update failed: ${reason}`));
-
-  IotDevice.send(payload)
+  Mqtt.send(payload)
     .then(response => {
       res.send(JSON.stringify({ speech: response, displayText: response }));
     })
