@@ -41,12 +41,16 @@ export const logger = winston.createLogger({
   transports: [
     new winston.transports.File({ filename: 'app.log' }),
     new winston.transports.Console({
-      format: winston.format.combine(winston.format.colorize(), logFormat)
+      format: winston.format.combine(logFormat)
     })
   ],
   format: logFormat
 });
 
 if (process.env.NODE_ENV !== 'production') {
+  logger.transports[1].format = winston.format.combine(
+    winston.format.colorize(),
+    logFormat
+  );
   logger.level = 'verbose';
 }
