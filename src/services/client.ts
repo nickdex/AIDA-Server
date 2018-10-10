@@ -86,7 +86,13 @@ export class ClientService {
       clients[username] = [];
     }
 
-    clients[username].push(data);
+    const userClients: IClient[] = clients[username];
+    const existingClients = userClients.filter(
+      c => c.name === data.name && c.deviceType === data.deviceType
+    );
+    if (existingClients.length === 0) {
+      clients[username].push(data);
+    }
 
     await this.updateClients(clients);
 
