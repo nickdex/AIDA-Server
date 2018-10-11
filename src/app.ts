@@ -35,7 +35,11 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.errorHandler());
-app.use(cors());
+app.use(
+  cors({
+    origin: process.env.CORS_CLIENT_WHITELIST_URL
+  })
+);
 // #endregion
 
 app.configure(rest());
