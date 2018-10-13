@@ -1,0 +1,24 @@
+<!--
+Thanks for your contribution!
+
+Please take a quick look at those things down there. They're quite important.
+Really! We wrote them for you. Yes you! With utmost care. Read them.
+-->
+
+**For short term contributors:** We understand that getting your commits well
+defined like we require is a hard task and takes some learning. If you
+look to help without wanting to contribute long term there's no need
+for you to learn this. Just drop us a message and we'll take care of brushing
+up your stuff for merge!
+
+### Checklist
+
+- [ ] I read the
+[guidelines](https://github.com/nickdex/AIDA-Server/blob/master/README.md#contributing) and
+I've followed them.
+
+- [ ] I ran `yarn-lint` and it produced no errors.
+
+- [ ] I ran `yarn-build` and it produced no errors.
+
+
