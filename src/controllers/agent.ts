@@ -40,7 +40,7 @@ const parseIntent = (data: any): IotPayload => {
   };
 
   const parsedAction = parseActionString(data.action);
-  const parsedContext = parseContext(data.contexts);
+  const parsedContext = parseContext(data.outputContexts);
 
   let device = '';
   let room = '';
@@ -76,9 +76,9 @@ export let agent = (req: Request, res: Response) => {
 
   Mqtt.send(payload)
     .then(response => {
-      res.send(JSON.stringify({ speech: response, displayText: response }));
+      res.send(JSON.stringify({ fulfillmentText: response, fulfillmentMessages: [{text: response}] }));
     })
     .catch(reason => {
-      res.send(JSON.stringify({ speech: reason, displayText: reason }));
+      res.send(JSON.stringify({ fulfillmentText: reason, fulfillmentMessages: [{text: reason}] }));
     });
 };
