@@ -1,4 +1,4 @@
-import { IIotDevice } from './iot-device';
+import { IIotDevice } from './iot-device-model';
 
 export interface IDeviceGroup {
   devices: IIotDevice[];

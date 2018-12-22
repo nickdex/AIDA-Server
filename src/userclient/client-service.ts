@@ -1,50 +1,9 @@
-import { HookContext, HooksObject, Params } from '@feathersjs/feathers';
-import axios from 'axios';
+import { Params } from '@feathersjs/feathers';
 
 import { logger } from '../logger';
-import { IClient } from '../model/client';
+import { IClient } from './client-model';
 
-const clientUrl = process.env.CLIENT_DATA_URL;
-
-export const clientHooks: Partial<HooksObject> = {
-  before: {
-    all(context: HookContext) {
-      if (!context.params.query.username) {
-        const message = 'Username not available';
-        logger.warn(message, { username: context.params.query.username });
-
-        throw new Error(message);
-      }
-
-      if (context.id) {
-        context.id =
-          typeof context.id === 'number'
-            ? context.id
-            : context.id.toUpperCase();
-      }
-      const query = context.params.query;
-      if (query && query.deviceType) {
-        context.params.query.deviceType = query.deviceType.toUpperCase();
-      }
-    },
-    create(context: HookContext) {
-      const data: IClient = context.data;
-
-      if (!data.name || !data.deviceType) {
-        const message = 'Creating client failed. Need name and deviceType';
-        logger.warn(message, {
-          ...data
-        });
-        throw new Error(message);
-      }
-
-      data.deviceType = data.deviceType.toUpperCase();
-      data.name = data.name.toUpperCase();
-
-      context.data = data;
-    }
-  }
-};
+import { clientData } from '../database/data';
 
 export class ClientService {
   public async find(params: Params): Promise<IClient[]> {
@@ -151,12 +110,12 @@ export class ClientService {
   }
 
   private async getClients() {
-    const result = await axios.get(clientUrl);
-
-    return result.data;
+    return Promise.resolve(clientData);
   }
 
   private async updateClients(clients: any) {
-    return axios.post(clientUrl, clients);
+    clientData.Nikhil = clients;
+
+    return Promise.resolve(null);
   }
 }

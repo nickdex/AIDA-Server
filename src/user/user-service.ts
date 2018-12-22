@@ -1,10 +1,9 @@
 import { Params } from '@feathersjs/feathers';
-import axios from 'axios';
 
 import { logger } from '../logger';
-import { IUser } from '../model/user';
+import { IUser } from './user-model';
 
-const userUrl = process.env.USER_DATA_URL;
+import { userData } from '../database/data';
 
 export class UserService {
   // tslint:disable no-reserved-keywords
@@ -64,12 +63,11 @@ export class UserService {
   }
 
   private async getUsers() {
-    const result = await axios.get(userUrl);
-
-    return result.data;
+    return Promise.resolve(userData);
   }
 
   private async updateUsers(users: any) {
-    return axios.post(userUrl, users);
+    // userData = users;
+    return Promise.resolve(null);
   }
 }

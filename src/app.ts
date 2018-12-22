@@ -18,9 +18,9 @@ import * as agentController from './controllers/agent';
 import { PushController } from './controllers/push';
 
 // Services
-import { clientHooks, ClientService } from './services/client';
-import { iotDeviceHooks, IotDeviceService } from './services/iot-device';
-import { UserService } from './services/user';
+import { iotDeviceHooks, IotDeviceService } from './iot-device/iot-device-service';
+import { UserService } from './user/user-service';
+import { clientHooks, ClientService } from './userclient/client-service';
 
 // Create Express server
 const app = express(feathers());

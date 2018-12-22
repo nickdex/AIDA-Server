@@ -1,80 +1,12 @@
-import {
-  Application,
-  HookContext,
-  HooksObject,
-  Params
-} from '@feathersjs/feathers';
-import axios from 'axios';
+import { Application, Params } from '@feathersjs/feathers';
 
-import { Mqtt } from '../iot/mqtt';
 import { logger } from '../logger';
-import { IDeviceGroup } from '../model/device-group';
-import { IIotDevice } from '../model/iot-device';
-import { IUser } from '../model/user';
+import { IUser } from '../user/user-model';
 import { Utility } from '../utility';
+import { IDeviceGroup } from './device-group';
+import { IIotDevice } from './iot-device-model';
 
-const deviceUrl = process.env.IOT_DEVICE_DATA_URL;
-
-export const iotDeviceHooks: Partial<HooksObject> = {
-  before: {
-    all(context: HookContext) {
-      const username = context.params.query.username;
-      if (!username) {
-        const message = 'Username not available';
-        logger.warn(message, { username });
-
-        throw new Error(message);
-      }
-    },
-    async patch(context: HookContext) {
-      const data: IIotDevice = context.data;
-
-      if (data.isOn == null) {
-        const message = 'Device action is not defined';
-        logger.warn(message, data, context.params.query);
-        throw new Error(message);
-      }
-      if (!data.pin) {
-        const message = 'Device pin is not defined';
-        logger.warn(message, data, context.params.query);
-        throw new Error(message);
-      }
-      if (!context.params.query.room) {
-        const message = 'Device room is not defined';
-        logger.warn(message, data, context.params.query);
-        throw new Error(message);
-      }
-
-      const result = await Mqtt.send({
-        action: data.isOn ? 'on' : 'off',
-        device: data.pin,
-        sender: 'server'
-      });
-      logger.debug('Iot device response', { result });
-
-      // Only if mqtt action was successful, save the state
-      if (result !== 'done') {
-        const message = 'Failed to receive ack from iot device';
-        logger.warn(message, { result });
-        throw new Error(message);
-      }
-
-      return context;
-    },
-    create(context: HookContext) {
-      const data = context.data;
-
-      if (!data.room || !data.name || !data.pin) {
-        const message = 'Creating device failed. Need pin, name and room';
-        logger.warn(message, data);
-        throw new Error(message);
-      }
-
-      // Default state when creating
-      context.data.isOn = false;
-    }
-  }
-};
+import { iotDevicesData } from '../database/data';
 
 export class IotDeviceService {
   private app: Application;
@@ -207,9 +139,7 @@ export class IotDeviceService {
   }
 
   private async getDeviceGroups(): Promise<IDeviceGroup[]> {
-    const result = await axios.get(deviceUrl);
-
-    return result.data;
+    return Promise.resolve(iotDevicesData);
   }
 
   private async getUserGroup(username: string): Promise<string> {
@@ -232,12 +162,13 @@ export class IotDeviceService {
   }
 
   private async updateDevices() {
-    const result = await axios.post(deviceUrl, this.deviceGroups);
-    logger.debug('Devices persisted successfully', {
-      status: result.status,
-      statusText: result.statusText
-    });
+    // const result = await axios.post(deviceUrl, this.deviceGroups);
+    // logger.debug('Devices persisted successfully', {
+    //   status: result.status,
+    //   statusText: result.statusText
+    // });
+    iotDevicesData[0] = this.deviceGroups[0];
 
-    return result;
+    return Promise.resolve(null);
   }
 }

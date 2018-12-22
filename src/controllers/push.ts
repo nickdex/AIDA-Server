@@ -5,7 +5,7 @@ import * as webPush from 'web-push';
 import { Mqtt } from '../iot/mqtt';
 import { IotPayload } from '../iot/payload';
 import { logger } from '../logger';
-import { IClient } from '../model/client';
+import { IClient } from '../userclient/client-model';
 
 export namespace PushController {
   let app: Application;
