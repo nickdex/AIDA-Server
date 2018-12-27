@@ -30,6 +30,8 @@ import { ClientService } from './userclient/client-service';
 const app = express(feathers());
 logger.verbose('Express app created using feathers');
 
+const whitelist = JSON.parse(process.env.CORS_CLIENT_WHITELIST_URLS);
+
 // #region Express configuration
 app.set('port', process.env.PORT || 3000);
 app.set('views', path.join(__dirname, '../views'));
@@ -41,7 +43,13 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.errorHandler());
 app.use(
   cors({
-    origin: process.env.CORS_CLIENT_WHITELIST_URL
+    origin: (origin, callback) => {
+      if (whitelist.indexOf(origin) !== -1 || !origin) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    }
   })
 );
 // #endregion
@@ -70,5 +78,9 @@ app.post('/push/click', PushController.click);
 // #region App Router
 app.post('/agent', agentController.agent);
 // #endregion
+
+app.get('/', (req, res) => {
+  res.send('Hello from AIDA-Server');
+});
 
 export = app;

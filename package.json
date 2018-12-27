@@ -2,7 +2,7 @@
   "name": "aida-server",
   "version": "2.0.3",
   "description": "Server to control all requests directed to my IoT devices in home",
-  "main": "./dist/server.js",
+  "main": "src/server.ts",
   "author": "Nikhil Warke",
   "license": "MIT",
   "repository": "https://github.com/nickdex/AIDA-Server.git",
@@ -13,18 +13,12 @@
     "node": ">=8"
   },
   "scripts": {
-    "start": "node dist/server.js",
+    "start": "ts-node src/server.ts",
     "build": "tsc -p tsconfig.release.json",
-    "dev": "yarn run build && node dist/server.js",
-    "local": "yarn run build && yarn run serve",
-    "serve": "forever start dist/server.js ",
-    "stop": "forever stop dist/server.js",
-    "clean": "rimraf coverage dist tmp",
-    "watch": "tsc -w -p tsconfig.release.json",
+    "dev": "ts-node-dev --inspect=0.0.0.0:5858 ./src/server.ts",
     "lint": "tslint -t stylish --project \"tsconfig.json\"",
-    "pretest": "yarn run lint",
-    "postinstall": "npm run build",
-    "test": "yarn run test-only",
+    "pretest": "yarn lint",
+    "test": "yarn test-only",
     "test-only": "jest --coverage",
     "test:watch": "jest --watch"
   },
@@ -62,6 +56,7 @@
     "jest": "^23.1.0",
     "ts-jest": "^22.0.1",
     "ts-node": "^7.0.0",
+    "ts-node-dev": "^1.0.0-pre.30",
     "tslint": "^5.8.0",
     "tslint-microsoft-contrib": "~5.0.2"
   }

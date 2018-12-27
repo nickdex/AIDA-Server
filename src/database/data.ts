@@ -20,7 +20,19 @@ export const iotDevicesData: IDeviceGroup[] = [
     devices: [
       {
         name: 'fan',
+        pin: 4,
+        isOn: false,
+        room: "nick's bedroom"
+      },
+      {
+        name: 'lights',
         pin: 2,
+        isOn: false,
+        room: "nick's bedroom"
+      },
+      {
+        name: 'outdoor',
+        pin: 5,
         isOn: false,
         room: "nick's bedroom"
       }

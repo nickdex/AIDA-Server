@@ -1,0 +1,1 @@
+docker run -d --name server --network aidanetwork -p 3000:3000  nickdex/aida-server
