@@ -17,10 +17,14 @@ import { Mqtt } from './iot/mqtt';
 import * as agentController from './controllers/agent';
 import { PushController } from './controllers/push';
 
-// Services
-import { iotDeviceHooks, IotDeviceService } from './iot-device/iot-device-service';
+// Hooks
+import { iotDeviceHooks } from './iot-device/iot-device-hook';
+import { clientHooks } from './userclient/client-hook';
+
+// Services;
+import { IotDeviceService } from './iot-device/iot-device-service';
 import { UserService } from './user/user-service';
-import { clientHooks, ClientService } from './userclient/client-service';
+import { ClientService } from './userclient/client-service';
 
 // Create Express server
 const app = express(feathers());
