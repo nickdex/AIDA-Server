@@ -1,6 +1,6 @@
 import { Request, Response } from 'express';
 import { find } from 'lodash';
-import { DevicePin } from '../iot-device/constants';
+import { DevicePin } from '../iot-device/device-pin';
 import { Mqtt } from '../iot/mqtt';
 import { IotPayload } from '../iot/payload';
 

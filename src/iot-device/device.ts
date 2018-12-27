@@ -1,4 +1,4 @@
-import { DevicePin } from './constants';
+import { DevicePin } from './device-pin';
 /**
  * Schema for data packet used for frontend.
  * @export

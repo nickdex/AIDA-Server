@@ -1,4 +1,4 @@
-import { DevicePin } from '../iot-device/constants';
+import { DevicePin } from '../iot-device/device-pin';
 /**
  * Schema class for payload that is sent to iot device.
  * @export
