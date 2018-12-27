@@ -1,6 +1,7 @@
 import { HookContext, HooksObject } from '@feathersjs/feathers';
 import { Mqtt } from '../iot/mqtt';
 import { logger } from '../logger';
+import { IUser } from '../user/user-model';
 import { IIotDevice } from './iot-device-model';
 
 export const iotDeviceHooks: Partial<HooksObject> = {
@@ -13,6 +14,28 @@ export const iotDeviceHooks: Partial<HooksObject> = {
 
         throw new Error(message);
       }
+
+      return context.app
+        .service('users')
+        .get(username)
+        .then((user: IUser) => {
+          if (!user) {
+            const message = 'User does not exist';
+            logger.warn(message, { username });
+
+            throw new Error(message);
+          }
+          if (!user.group) {
+            const message = 'User does not belong to any group';
+            logger.warn(message, { username });
+
+            throw new Error(message);
+          }
+          context.params.group = user.group;
+
+          return context;
+        })
+        .catch(() => context);
     },
     async patch(context: HookContext) {
       const data: IIotDevice = context.data;

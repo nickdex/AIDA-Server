@@ -1,30 +1,29 @@
 import { Params } from '@feathersjs/feathers';
 
 import { logger } from '../logger';
+import { UserData } from './user-data';
 import { IUser } from './user-model';
-
-import { userData } from '../database/data';
 
 export class UserService {
   // tslint:disable no-reserved-keywords
   public async get(id: string, params: Params) {
-    const users = await this.getUsers();
+    const users = await UserData.getUsers();
 
     // Don't return password
     return { ...users[id], password: '' };
   }
 
   public async create(data: IUser) {
-    const users = await this.getUsers();
+    const users = await UserData.getUsers();
     users[data.username] = data;
 
-    await this.updateUsers(users);
+    await UserData.updateUsers(users);
 
     return data;
   }
 
   public async patch(id: string, data: IUser, params: Params) {
-    const users = await this.getUsers();
+    const users = await UserData.getUsers();
 
     if (!users[id]) {
       const message = 'User does not exist';
@@ -40,13 +39,13 @@ export class UserService {
 
     users[id].password = data.password;
 
-    await this.updateUsers(users);
+    await UserData.updateUsers(users);
 
     return users[id];
   }
 
   public async remove(id: string, params: Params) {
-    const users = await this.getUsers();
+    const users = await UserData.getUsers();
     const user = users[id];
 
     if (user.password !== params.query.password) {
@@ -57,17 +56,8 @@ export class UserService {
 
     delete users[id];
 
-    await this.updateUsers(users);
+    await UserData.updateUsers(users);
 
     return user;
-  }
-
-  private async getUsers() {
-    return Promise.resolve(userData);
-  }
-
-  private async updateUsers(users: any) {
-    // userData = users;
-    return Promise.resolve(null);
   }
 }

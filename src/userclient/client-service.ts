@@ -3,11 +3,11 @@ import { Params } from '@feathersjs/feathers';
 import { logger } from '../logger';
 import { IClient } from './client-model';
 
-import { clientData } from '../database/data';
+import { ClientData } from './client-data';
 
 export class ClientService {
   public async find(params: Params): Promise<IClient[]> {
-    const clients = await this.getClients();
+    const clients = await ClientData.getClients();
     const username = params.query.username;
 
     if (!clients[username]) {
@@ -19,7 +19,7 @@ export class ClientService {
 
   // tslint:disable no-reserved-keywords
   public async get(id: string, params: Params) {
-    const clients = await this.getClients();
+    const clients = await ClientData.getClients();
     const username = params.query.username;
     const userClients: IClient[] = clients[username];
 
@@ -38,7 +38,7 @@ export class ClientService {
   }
 
   public async create(data: IClient, params: Params) {
-    const clients = await this.getClients();
+    const clients = await ClientData.getClients();
     const username = params.query.username;
 
     if (!clients[username]) {
@@ -53,13 +53,13 @@ export class ClientService {
       clients[username].push(data);
     }
 
-    await this.updateClients(clients);
+    await ClientData.updateClients(clients);
 
     return data;
   }
 
   public async patch(id: string, data: IClient, params: Params) {
-    const clients = await this.getClients();
+    const clients = await ClientData.getClients();
     const username = params.query.username;
     const userClients: IClient[] = clients[username];
 
@@ -69,7 +69,7 @@ export class ClientService {
         // Only update subscription token, as other fields are auto populated
         client.subscriptionToken = data.subscriptionToken;
         clients[username][index] = client;
-        await this.updateClients(clients);
+        await ClientData.updateClients(clients);
 
         return data;
       }
@@ -84,7 +84,7 @@ export class ClientService {
   }
 
   public async remove(id: string, params: Params) {
-    const clients = await this.getClients();
+    const clients = await ClientData.getClients();
     const username = params.query.username;
     const userClients: IClient[] = clients[username];
 
@@ -95,7 +95,7 @@ export class ClientService {
 
         clients[username] = userClients;
 
-        await this.updateClients(clients);
+        await ClientData.updateClients(clients);
 
         return removed;
       }
@@ -107,15 +107,5 @@ export class ClientService {
       ...params.query
     });
     throw new Error(message);
-  }
-
-  private async getClients() {
-    return Promise.resolve(clientData);
-  }
-
-  private async updateClients(clients: any) {
-    clientData.Nikhil = clients;
-
-    return Promise.resolve(null);
   }
 }
