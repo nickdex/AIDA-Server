@@ -62,3 +62,6 @@ env/.env
 
 # Database file
 data/
+
+# QEMU binary for arm arch, for rpi docker builds
+qemu-arm-static
