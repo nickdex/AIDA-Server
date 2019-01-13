@@ -2,10 +2,10 @@ import { Application, Service } from '@feathersjs/feathers';
 import { Request, Response } from 'express';
 import * as webPush from 'web-push';
 
+import { IClient } from '../client-device/client-model';
 import { Mqtt } from '../iot/mqtt';
 import { IotPayload } from '../iot/payload';
 import { logger } from '../logger';
-import { IClient } from '../userclient/client-model';
 
 export namespace PushController {
   let app: Application;

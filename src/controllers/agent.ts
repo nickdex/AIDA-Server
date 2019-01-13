@@ -1,6 +1,5 @@
 import { Request, Response } from 'express';
 import { find } from 'lodash';
-import { DevicePin } from '../iot-device/device-pin';
 import { Mqtt } from '../iot/mqtt';
 import { IotPayload } from '../iot/payload';
 
@@ -61,11 +60,11 @@ const parseIntent = (data: any): IotPayload => {
   payload.action = parsedAction.action;
 
   if (room === 'outdoor') {
-    payload.device = DevicePin.OUTDOOR;
+    payload.device = 5;
   } else if (device === 'fan') {
-    payload.device = DevicePin.FAN;
+    payload.device = 4;
   } else if (device === 'lights') {
-    payload.device = DevicePin.LIGHTS;
+    payload.device = 2;
   }
 
   return payload;
@@ -76,9 +75,19 @@ export let agent = (req: Request, res: Response) => {
 
   Mqtt.send(payload)
     .then(response => {
-      res.send(JSON.stringify({ fulfillmentText: response, fulfillmentMessages: [{text: response}] }));
+      res.send(
+        JSON.stringify({
+          fulfillmentText: response,
+          fulfillmentMessages: [{ text: response }]
+        })
+      );
     })
     .catch(reason => {
-      res.send(JSON.stringify({ fulfillmentText: reason, fulfillmentMessages: [{text: reason}] }));
+      res.send(
+        JSON.stringify({
+          fulfillmentText: reason,
+          fulfillmentMessages: [{ text: reason }]
+        })
+      );
     });
 };
