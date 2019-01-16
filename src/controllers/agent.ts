@@ -1,5 +1,5 @@
 import { Request, Response } from 'express';
-import { find } from 'lodash';
+import * as lodash from 'lodash';
 import { Mqtt } from '../iot/mqtt';
 import { IotPayload } from '../iot/payload';
 
@@ -17,8 +17,8 @@ export const parseContext = (contexts: any[]) => {
     device: '',
     room: ''
   };
-  const deviceSwitchContext = find(contexts, ['name', 'device-switch']);
-  const switchContext = find(contexts, ['name', 'switch']);
+  const deviceSwitchContext = lodash.find(contexts, ['name', 'device-switch']);
+  const switchContext = lodash.find(contexts, ['name', 'switch']);
 
   if (deviceSwitchContext) {
     context.device = deviceSwitchContext.parameters.device;

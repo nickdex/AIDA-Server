@@ -1,6 +1,6 @@
 import { HookContext, HooksObject, Service } from '@feathersjs/feathers';
 
-import { find } from 'lodash';
+import * as lodash from 'lodash';
 
 import { logger } from '../logger';
 import { IUser } from '../user/user-model';
@@ -46,7 +46,7 @@ export const clientHooks: Partial<HooksObject> = {
         clients = [];
       }
 
-      const client = find(clients, {
+      const client = lodash.find(clients, {
         name: data.name,
         deviceType: data.deviceType
       });
