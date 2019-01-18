@@ -1,4 +1,4 @@
-import express, { rest } from '@feathersjs/express';
+import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
 import * as cors from 'cors';
 import * as dotenv from 'dotenv';
@@ -18,13 +18,11 @@ import * as agentController from './controllers/agent';
 import { PushController } from './controllers/push';
 
 // Hooks
+import { clientHooks } from './client-device/client-hook';
 import { iotDeviceHooks } from './iot-device/iot-device-hook';
-import { clientHooks } from './userclient/client-hook';
 
-// Services;
-import { IotDeviceService } from './iot-device/iot-device-service';
-import { UserService } from './user/user-service';
-import { ClientService } from './userclient/client-service';
+// Database
+import { databaseService } from './database';
 
 // Create Express server
 const app = express(feathers());
@@ -39,7 +37,6 @@ app.set('view engine', 'pug');
 app.use(morgan('dev', { stream: { write: msg => logger.info(msg) } }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.errorHandler());
 app.use(
   cors({
@@ -54,15 +51,17 @@ app.use(
 );
 // #endregion
 
-app.configure(rest());
+app.configure(express.rest());
 
 Mqtt.init();
 logger.info('Mqtt Initialized');
 
 // #region Service Registration
-app.use('/clients', new ClientService());
-app.use('/devices', new IotDeviceService());
-app.use('/users', new UserService());
+app.use('/clients', databaseService('users'));
+app.use('/users', databaseService('users'));
+
+app.use('/devices', databaseService('devices'));
+app.use('/groups', databaseService('groups'));
 
 app.service('clients').hooks(clientHooks);
 app.service('devices').hooks(iotDeviceHooks);
