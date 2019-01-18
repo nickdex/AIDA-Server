@@ -1,59 +1,61 @@
 import { HookContext, HooksObject } from '@feathersjs/feathers';
+import * as lodash from 'lodash';
+
 import { Mqtt } from '../iot/mqtt';
 import { logger } from '../logger';
-import { IUser } from '../user/user-model';
+import { IDeviceGroup } from './device-group-model';
 import { IIotDevice } from './iot-device-model';
 
 export const iotDeviceHooks: Partial<HooksObject> = {
   before: {
-    all(context: HookContext) {
-      const username = context.params.query.username;
-      if (!username) {
-        const message = 'Username not available';
-        logger.warn(message, { username });
+    all(context: HookContext<IIotDevice>) {
+      const data: IIotDevice = context.data;
+      const params = context.params;
 
-        throw new Error(message);
-      }
+      // Patch, Create and Update methods
+      if (data != null) {
+        const method = context.method;
 
-      return context.app
-        .service('users')
-        .get(username)
-        .then((user: IUser) => {
-          if (!user) {
-            const message = 'User does not exist';
-            logger.warn(message, { username });
+        if (method === 'patch') {
+          if (data.isOn == null) {
+            const message = 'Device action is required';
+            logger.warn(message, data, params.query);
 
+            // No operation
             throw new Error(message);
           }
-          if (!user.group) {
-            const message = 'User does not belong to any group';
-            logger.warn(message, { username });
-
-            throw new Error(message);
-          }
-          context.params.group = user.group;
 
           return context;
-        })
-        .catch(() => context);
+        }
+
+        const keys = ['name', 'pin'];
+        if (
+          lodash
+            .chain(keys)
+            .map(key => data[key])
+            .some(lodash.isNil)
+            .value()
+        ) {
+          const message = 'Creating device failed. Need pin and name';
+          logger.warn(message, data);
+          throw new Error(message);
+        }
+      }
+
+      return context;
     },
-    async patch(context: HookContext) {
+    async patch(context: HookContext<IIotDevice>) {
       const data: IIotDevice = context.data;
+      const params = context.params;
 
       if (data.isOn == null) {
-        const message = 'Device action is not defined';
-        logger.warn(message, data, context.params.query);
-        throw new Error(message);
-      }
-      if (!data.pin) {
-        const message = 'Device pin is not defined';
-        logger.warn(message, data, context.params.query);
-        throw new Error(message);
-      }
-      if (!context.params.query.room) {
-        const message = 'Device room is not defined';
-        logger.warn(message, data, context.params.query);
-        throw new Error(message);
+        const message = 'Device action is required';
+        logger.warn(message, data, params.query);
+
+        // No operation
+        context.result = data;
+
+        return context;
       }
 
       const result = await Mqtt.send({
@@ -61,28 +63,71 @@ export const iotDeviceHooks: Partial<HooksObject> = {
         device: data.pin,
         sender: 'server'
       });
-      logger.debug('Iot device response', { result });
+      logger.debug('Iot device response', result);
 
       // Only if mqtt action was successful, save the state
       if (result !== 'done') {
         const message = 'Failed to receive ack from iot device';
-        logger.warn(message, { result });
+        logger.warn(message, result);
         throw new Error(message);
       }
 
       return context;
     },
-    create(context: HookContext) {
+    async create(context: HookContext<IIotDevice>) {
       const data = context.data;
+      const params = context.params;
+      const {
+        roomId,
+        deviceGroupId
+      }: { roomId: string; deviceGroupId: string } = <any>params.query;
 
-      if (!data.room || !data.name || !data.pin) {
-        const message = 'Creating device failed. Need pin, name and room';
-        logger.warn(message, data);
+      // Default state when creating
+      data.isOn = false;
+
+      const deviceGroup: IDeviceGroup = await context.app
+        .service('groups')
+        .get(deviceGroupId);
+
+      const room = lodash.find(deviceGroup.rooms, { _id: roomId });
+
+      // #region Parameter checking
+      if (room == null) {
+        const message =
+          'room does not exist. Please check room id or create new room';
+        logger.warn(message, params.query);
         throw new Error(message);
       }
 
-      // Default state when creating
-      context.data.isOn = false;
+      const deviceId = lodash
+        .join([deviceGroupId, roomId, data.name], '-')
+        .toLowerCase();
+
+      if (lodash.includes(room.deviceIds, deviceId)) {
+        const message = 'Device already exists in the given room';
+        logger.warn(message, { device: data, room: roomId });
+        throw new Error(message);
+      }
+      // #endregion
+
+      // Add Room and Group Reference
+      data.roomId = roomId;
+      data.groupId = deviceGroupId;
+      // Add Device Reference
+      room.deviceIds.push(deviceId);
+      // For Updating group in after hook when successfully saved
+      params.deviceGroup = deviceGroup;
+
+      return context;
+    }
+  },
+  after: {
+    async create(context: HookContext<IIotDevice>) {
+      const deviceGroup: IDeviceGroup = context.params.deviceGroup;
+
+      await context.app.service('groups').patch(deviceGroup._id, deviceGroup);
+
+      return context;
     }
   }
 };
