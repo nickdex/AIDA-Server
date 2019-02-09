@@ -1,1 +1,1 @@
-docker run -d --name server --network aidanetwork -p 3000:3000  nickdex/aida-server
+docker run -d --name=server --net=aidanet --restart=always --env PORT=80 --env MQTT_URL='http://mqtt:1883' --env DATABASE_URL='http://database' --env CORS_CLIENT_WHITELIST_URLS='["http://dashboard", "http://192.168.0.100"]' nickdex/aida-server

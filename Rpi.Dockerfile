@@ -13,6 +13,6 @@ RUN cd / && yarn && ln -s /node_modules /app/node_modules
 
 ADD . /app
 
-EXPOSE 3000
+EXPOSE 80
 
 CMD [ "yarn", "start" ]

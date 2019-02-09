@@ -21,7 +21,7 @@ docker build -t nickdex/$IMAGE_TAG -f $DOCKERFILE .
 docker run --rm --entrypoint cat nickdex/$IMAGE_TAG:latest /yarn.lock > /tmp/yarn.lock
 if ! diff -q yarn.lock /tmp/yarn.lock > /dev/null  2>&1; then
   echo "Saving Yarn cache"
-  docker run --rm --entrypoint tar nickdex/$IMAGE_TAG:latest czf - /usr/local/share/.cache/yarn/v3/ > .yarn-cache.tgz
+  docker run --rm --entrypoint tar nickdex/$IMAGE_TAG:latest czf - /usr/local/share/.cache/yarn/v4/ > .yarn-cache.tgz
   echo "Saving yarn.lock"
   cp /tmp/yarn.lock yarn.lock
 fi
