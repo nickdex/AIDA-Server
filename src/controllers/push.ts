@@ -1,5 +1,5 @@
+import { Request, Response } from '@feathersjs/express';
 import { Application, Service } from '@feathersjs/feathers';
-import { Request, Response } from 'express';
 import * as webPush from 'web-push';
 
 import { IClient } from '../client-device/client-model';

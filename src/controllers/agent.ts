@@ -1,4 +1,4 @@
-import { Request, Response } from 'express';
+import { Request, Response } from '@feathersjs/express';
 import * as lodash from 'lodash';
 import { Mqtt } from '../iot/mqtt';
 import { IotPayload } from '../iot/payload';

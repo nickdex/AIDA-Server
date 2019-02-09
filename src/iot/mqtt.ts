@@ -4,17 +4,17 @@ import { logger } from '../logger';
 import { IotPayload } from './payload';
 
 export namespace Mqtt {
-  const URL = process.env.CLOUDMQTT_URL || 'mqtt://localhost:1883';
-  const IOT_TOPIC = process.env.CLOUDMQTT_TOPIC_IOT || 'up-test';
-  const SERVER_TOPIC = process.env.CLOUDMQTT_TOPIC_SERVER || 'down-test';
+  const URL = process.env.MQTT_URL || 'mqtt://localhost:1883';
+  const IOT_TOPIC = process.env.MQTT_TOPIC_IOT || 'up-test';
+  const SERVER_TOPIC = process.env.MQTT_TOPIC_SERVER || 'down-test';
 
-  let mqttClient: MqttClient = null;
+  let mqttClient: MqttClient;
 
   export const init = () => {
-    if (mqttClient == null) {
+    if (mqttClient === undefined) {
       mqttClient = connect(URL);
       logger.debug('Mqtt Client connected', URL);
-      mqttClient.subscribe(IOT_TOPIC, null, logger.debug);
+      mqttClient.subscribe(IOT_TOPIC, undefined, logger.debug);
       logger.debug('Mqtt Client subscribed', IOT_TOPIC);
     }
   };

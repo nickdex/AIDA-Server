@@ -47,7 +47,7 @@ export const clientHooks: Partial<HooksObject> = {
       const user = await service.get(context.params.query.username);
       let clients = user.clients;
 
-      if (clients == null) {
+      if (clients === undefined) {
         clients = [];
         logger.debug('New client list initialized');
       }

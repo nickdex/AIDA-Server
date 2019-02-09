@@ -13,11 +13,11 @@ export const iotDeviceHooks: Partial<HooksObject> = {
       const params = context.params;
 
       // Patch, Create and Update methods
-      if (data != null) {
+      if (data !== undefined) {
         const method = context.method;
 
         if (method === 'patch') {
-          if (data.isOn == null) {
+          if (data.isOn === undefined) {
             const message = 'Device action is required';
             logger.warn(message, data, params.query);
 
@@ -48,7 +48,7 @@ export const iotDeviceHooks: Partial<HooksObject> = {
       const data: IIotDevice = context.data;
       const params = context.params;
 
-      if (data.isOn == null) {
+      if (data.isOn === undefined) {
         const message = 'Device action is required';
         logger.warn(message, data, params.query);
 
@@ -92,7 +92,7 @@ export const iotDeviceHooks: Partial<HooksObject> = {
       const room = lodash.find(deviceGroup.rooms, { _id: roomId });
 
       // #region Parameter checking
-      if (room == null) {
+      if (room === undefined) {
         const message =
           'room does not exist. Please check room id or create new room';
         logger.warn(message, params.query);

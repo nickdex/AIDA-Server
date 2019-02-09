@@ -1,9 +1,9 @@
+// tslint:disable-next-line match-default-export-name
 import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
 import * as cors from 'cors';
 import * as dotenv from 'dotenv';
 import * as morgan from 'morgan';
-import * as path from 'path';
 
 import { logger } from './logger';
 
@@ -32,8 +32,6 @@ const whitelist = JSON.parse(process.env.CORS_CLIENT_WHITELIST_URLS);
 
 // #region Express configuration
 app.set('port', process.env.PORT || 3000);
-app.set('views', path.join(__dirname, '../views'));
-app.set('view engine', 'pug');
 app.use(morgan('dev', { stream: { write: msg => logger.info(msg) } }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -42,7 +40,7 @@ app.use(
   cors({
     origin: (origin, callback) => {
       if (whitelist.indexOf(origin) !== -1 || !origin) {
-        callback(null, true);
+        callback(undefined, true);
       } else {
         callback(new Error('Not allowed by CORS'));
       }
