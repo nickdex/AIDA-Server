@@ -1,11 +1,11 @@
 export interface IClient {
   name: string;
-  deviceType: DeviceType;
+  deviceType: DeviceType ;
   subscriptionToken?: string;
 }
 
 export enum DeviceType {
-  BROWSER,
-  ANDROID,
-  IOS
+  BROWSER = 'browser',
+  ANDROID = 'android',
+  IOS = 'ios'
 }

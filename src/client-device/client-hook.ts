@@ -4,7 +4,7 @@ import * as lodash from 'lodash';
 
 import { logger } from '../logger';
 import { IUser } from '../user/user-model';
-import { IClient } from './client-model';
+import { DeviceType, IClient } from './client-model';
 
 export const clientHooks: Partial<HooksObject> = {
   before: {
@@ -30,6 +30,8 @@ export const clientHooks: Partial<HooksObject> = {
 
       if (context.data) {
         context.data.name = lodash.toLower(context.data.name);
+        context.data.deviceType =
+          DeviceType[lodash.toUpper(context.data.deviceType.toString())];
       }
     },
     async create(context: HookContext<IClient>) {
@@ -53,10 +55,10 @@ export const clientHooks: Partial<HooksObject> = {
       }
 
       if (
-        !lodash.includes(clients, {
+        lodash.findIndex(clients, {
           name: data.name,
           deviceType: data.deviceType
-        })
+        }) === -1
       ) {
         clients.push(data);
       }
