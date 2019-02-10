@@ -58,17 +58,15 @@ export const iotDeviceHooks: Partial<HooksObject> = {
         return context;
       }
 
-      const result = await Mqtt.send({
-        action: data.isOn ? 'on' : 'off',
-        device: data.pin,
-        sender: 'server'
-      });
-      logger.debug('Iot device response', result);
-
-      // Only if mqtt action was successful, save the state
-      if (result !== 'done') {
-        const message = 'Failed to receive ack from iot device';
-        logger.warn(message, result);
+      try {
+        await Mqtt.send({
+          action: data.isOn ? 'on' : 'off',
+          device: data.pin,
+          sender: 'server'
+        });
+      } catch (err) {
+        const message = 'Iot device could not complete request';
+        logger.warn(message, err);
         throw new Error(message);
       }
 

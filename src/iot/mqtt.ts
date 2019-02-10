@@ -41,9 +41,10 @@ export namespace Mqtt {
                 `Topic: ${topic} | Message Received: ${JSON.stringify(message)}`
               );
 
-              if (message.sender === 'iot') {
-                resolve(message.message);
+              if (!message.response.error) {
+                resolve(message);
               }
+              reject(message);
             });
           }
         );
