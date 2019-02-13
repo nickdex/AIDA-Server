@@ -131,12 +131,17 @@
     lodash "^4.17.10"
     to-fast-properties "^2.0.0"
 
+"@feathersjs/commons@^1.4.3":
+  version "1.4.4"
+  resolved "https://registry.yarnpkg.com/@feathersjs/commons/-/commons-1.4.4.tgz#cd8c0a4dfc7ba1027d359ae80542381241564728"
+  integrity sha512-ZPpzyZA3CPfoa9AuFv3BJUI/ubzaaXixp8T/pqeMFPT6DOaU/6oF7lz1RxwimzfJNna4gy/HByt0EoLSI3BKWg==
+
 "@feathersjs/commons@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@feathersjs/commons/-/commons-4.0.0.tgz#ae49bae4025c35aaeb9aacb6a0c27a3d1def5062"
   integrity sha512-hyCLse4RiNt7WLPQ0KSudjoVnwiRykhYzIZdtDon9i2usPaoYkFw/fEYZrkE5HVB+sUTwphZoZ1oOntRk1MShg==
 
-"@feathersjs/errors@^3.3.6":
+"@feathersjs/errors@^3.3.0", "@feathersjs/errors@^3.3.6":
   version "3.3.6"
   resolved "https://registry.yarnpkg.com/@feathersjs/errors/-/errors-3.3.6.tgz#c34cfcd0a8fc1519afb36030efb3f835a8088015"
   integrity sha512-VCohY/AQU13xYyZGl6rfdUgE+2bjaI76a4aEb6reIphHKgb4mnjYlg2PzS1/hcU1qUNi515kY9yQa5HsE7J1dQ==
@@ -1354,7 +1359,7 @@ debug@2.6.9, debug@^2.1.2, debug@^2.2.0, debug@^2.3.3, debug@^2.6.8:
   dependencies:
     ms "2.0.0"
 
-debug@^3.0.0, debug@^3.1.0:
+debug@^3.1.0:
   version "3.2.6"
   resolved "https://registry.yarnpkg.com/debug/-/debug-3.2.6.tgz#e83d17de16d8a7efb7717edbe5fb10135eee629b"
   integrity sha512-mel+jf7nrtEl5Pn1Qx46zARXKDpBbvzezse7p7LqINmdoIk8PYP5SySaxEmYv6TZ0JyEKA1hsCId6DIhgITtWQ==
@@ -1914,27 +1919,14 @@ fb-watchman@^2.0.0:
   dependencies:
     bser "^2.0.0"
 
-feathers-commons@^0.8.7:
-  version "0.8.7"
-  resolved "https://registry.yarnpkg.com/feathers-commons/-/feathers-commons-0.8.7.tgz#11c6f25b537745a983e8d61552d7db8932d53782"
-  integrity sha1-EcbyW1N3RamD6NYVUtfbiTLVN4I=
-
-feathers-errors@^2.8.1:
-  version "2.9.2"
-  resolved "https://registry.yarnpkg.com/feathers-errors/-/feathers-errors-2.9.2.tgz#96ca0e5fe50cc56f0eccc90ce3fa5e1f8840828d"
-  integrity sha512-qwIX97bNW7+1tWVG073+omUA0rCYKJtTtwuzTrrvfrtdr8J8Dk1Fy4iaV9Fa6/YBD5AZu0lsplPE0iu4u/d4GQ==
+feathers-pouchdb@alukito/feathers-pouchdb:
+  version "2.1.0"
+  resolved "https://codeload.github.com/alukito/feathers-pouchdb/tar.gz/346bf5b9b983ef3d80734a2b57daa1976f874a47"
   dependencies:
-    debug "^3.0.0"
-
-feathers-pouchdb@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/feathers-pouchdb/-/feathers-pouchdb-2.0.2.tgz#1f439f272dc7d96340d37950aa0c20532c79d606"
-  integrity sha512-vNElga8JF7tC38zkzIVcwIfOyj4hx8DEV+BpH2ClAsnyjwCAwwDWkWl7AGEABNkqH1iLW2RQNKTKRJfzwdf8pA==
-  dependencies:
+    "@feathersjs/commons" "^1.4.3"
+    "@feathersjs/errors" "^3.3.0"
     debug "^2.6.8"
-    feathers-commons "^0.8.7"
-    feathers-errors "^2.8.1"
-    lodash "^4.17.4"
+    lodash "^4.17.10"
     uberproto "^1.2.0"
 
 fecha@^2.3.3:
@@ -3471,7 +3463,7 @@ lodash.toarray@^4.4.0:
   resolved "https://registry.yarnpkg.com/lodash.toarray/-/lodash.toarray-4.4.0.tgz#24c4bfcd6b2fba38bfd0594db1179d8e9b656561"
   integrity sha1-JMS/zWsvuji/0FlNsRedjptlZWE=
 
-lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.4:
+lodash@^4.13.1, lodash@^4.17.10, lodash@^4.17.11:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
