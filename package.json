@@ -1,6 +1,6 @@
 {
   "name": "aida-server",
-  "version": "3.0.0",
+  "version": "3.0.4",
   "private": true,
   "description": "Server to control all requests directed to my IoT devices in home",
   "main": "src/server.ts",
