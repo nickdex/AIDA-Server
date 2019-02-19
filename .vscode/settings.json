@@ -1,7 +1,7 @@
 {
   "cSpell.words": [
     "autoload",
-    "cloudmqtt",
+    "mqtt",
     "feathersjs",
     "gcmapi",
     "nedbdevice",

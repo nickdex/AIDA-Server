@@ -1,9 +1,9 @@
-import express, { rest } from '@feathersjs/express';
+// tslint:disable-next-line match-default-export-name
+import express from '@feathersjs/express';
 import feathers from '@feathersjs/feathers';
 import * as cors from 'cors';
 import * as dotenv from 'dotenv';
 import * as morgan from 'morgan';
-import * as path from 'path';
 
 import { logger } from './logger';
 
@@ -17,40 +17,49 @@ import { Mqtt } from './iot/mqtt';
 import * as agentController from './controllers/agent';
 import { PushController } from './controllers/push';
 
-// Services
-import { clientHooks, ClientService } from './services/client';
-import { iotDeviceHooks, IotDeviceService } from './services/iot-device';
-import { UserService } from './services/user';
+// Hooks
+import { clientHooks } from './client-device/client-hook';
+import { iotDeviceHooks } from './iot-device/iot-device-hook';
+
+// Database
+import { databaseService } from './database';
 
 // Create Express server
 const app = express(feathers());
 logger.verbose('Express app created using feathers');
 
+const whitelist = JSON.parse(process.env.CORS_CLIENT_WHITELIST_URLS);
+
 // #region Express configuration
 app.set('port', process.env.PORT || 3000);
-app.set('views', path.join(__dirname, '../views'));
-app.set('view engine', 'pug');
 app.use(morgan('dev', { stream: { write: msg => logger.info(msg) } }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.errorHandler());
 app.use(
   cors({
-    origin: process.env.CORS_CLIENT_WHITELIST_URL
+    origin: (origin, callback) => {
+      if (whitelist.indexOf(origin) !== -1 || !origin) {
+        callback(undefined, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    }
   })
 );
 // #endregion
 
-app.configure(rest());
+app.configure(express.rest());
 
 Mqtt.init();
 logger.info('Mqtt Initialized');
 
 // #region Service Registration
-app.use('/clients', new ClientService());
-app.use('/devices', new IotDeviceService());
-app.use('/users', new UserService());
+app.use('/clients', databaseService('users'));
+app.use('/users', databaseService('users'));
+
+app.use('/devices', databaseService('devices'));
+app.use('/groups', databaseService('groups'));
 
 app.service('clients').hooks(clientHooks);
 app.service('devices').hooks(iotDeviceHooks);
@@ -66,5 +75,9 @@ app.post('/push/click', PushController.click);
 // #region App Router
 app.post('/agent', agentController.agent);
 // #endregion
+
+app.get('/', (req, res) => {
+  res.send('Hello from AIDA-Server');
+});
 
 export = app;

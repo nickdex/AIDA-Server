@@ -51,7 +51,7 @@ dist/
 # Optional REPL history
 .node_repl_history
 
-# Output of 'npm pack'
+# Output of 'npm pack', also includes .yarn-cache.tgz
 *.tgz
 
 # Yarn Integrity file
@@ -62,3 +62,6 @@ env/.env
 
 # Database file
 data/
+
+# QEMU binary for arm arch, for rpi docker builds
+qemu-arm-static

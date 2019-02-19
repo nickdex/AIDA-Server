@@ -1,6 +1,5 @@
-import { Request, Response } from 'express';
-import { find } from 'lodash';
-import { DevicePin } from '../constants';
+import { Request, Response } from '@feathersjs/express';
+import * as lodash from 'lodash';
 import { Mqtt } from '../iot/mqtt';
 import { IotPayload } from '../iot/payload';
 
@@ -18,8 +17,8 @@ export const parseContext = (contexts: any[]) => {
     device: '',
     room: ''
   };
-  const deviceSwitchContext = find(contexts, ['name', 'device-switch']);
-  const switchContext = find(contexts, ['name', 'switch']);
+  const deviceSwitchContext = lodash.find(contexts, ['name', 'device-switch']);
+  const switchContext = lodash.find(contexts, ['name', 'switch']);
 
   if (deviceSwitchContext) {
     context.device = deviceSwitchContext.parameters.device;
@@ -40,7 +39,7 @@ const parseIntent = (data: any): IotPayload => {
   };
 
   const parsedAction = parseActionString(data.action);
-  const parsedContext = parseContext(data.contexts);
+  const parsedContext = parseContext(data.outputContexts);
 
   let device = '';
   let room = '';
@@ -61,11 +60,11 @@ const parseIntent = (data: any): IotPayload => {
   payload.action = parsedAction.action;
 
   if (room === 'outdoor') {
-    payload.device = DevicePin.OUTDOOR;
+    payload.device = 5;
   } else if (device === 'fan') {
-    payload.device = DevicePin.FAN;
+    payload.device = 4;
   } else if (device === 'lights') {
-    payload.device = DevicePin.LIGHTS;
+    payload.device = 2;
   }
 
   return payload;
@@ -76,9 +75,19 @@ export let agent = (req: Request, res: Response) => {
 
   Mqtt.send(payload)
     .then(response => {
-      res.send(JSON.stringify({ speech: response, displayText: response }));
+      res.send(
+        JSON.stringify({
+          fulfillmentText: response,
+          fulfillmentMessages: [{ text: response }]
+        })
+      );
     })
     .catch(reason => {
-      res.send(JSON.stringify({ speech: reason, displayText: reason }));
+      res.send(
+        JSON.stringify({
+          fulfillmentText: reason,
+          fulfillmentMessages: [{ text: reason }]
+        })
+      );
     });
 };

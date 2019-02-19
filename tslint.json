@@ -18,6 +18,7 @@
     "no-redundant-jsdoc": false,
     "no-void-expression": false,
     "strict-boolean-expressions": false,
+    "newline-per-chained-call": false,
     "trailing-comma": [
       // https://palantir.github.io/tslint/rules/trailing-comma/
       false,
