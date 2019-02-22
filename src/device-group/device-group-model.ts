@@ -1,4 +1,4 @@
-import { IIotRoom } from './iot-room-model';
+import { IIotRoom } from '../room/iot-room-model';
 
 export interface IDeviceGroup {
   _id: string; // join([IUser._id, name], '-')

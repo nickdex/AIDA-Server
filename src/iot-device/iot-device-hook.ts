@@ -3,7 +3,8 @@ import * as lodash from 'lodash';
 
 import { Mqtt } from '../iot/mqtt';
 import { logger } from '../logger';
-import { IDeviceGroup } from './device-group-model';
+
+import { IDeviceGroup } from '../device-group/device-group-model';
 import { IIotDevice } from './iot-device-model';
 
 export const iotDeviceHooks: Partial<HooksObject> = {
