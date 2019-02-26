@@ -19,7 +19,9 @@ import { PushController } from './controllers/push';
 
 // Hooks
 import { clientHooks } from './client-device/client-hook';
+import { iotAgentHooks } from './iot-agent/iot-agent-hook';
 import { iotDeviceHooks } from './iot-device/iot-device-hook';
+import { roomHooks } from './room/room-hook';
 
 // Database
 import { databaseService } from './database';
@@ -55,14 +57,18 @@ Mqtt.init();
 logger.info('Mqtt Initialized');
 
 // #region Service Registration
-app.use('/clients', databaseService('users'));
+app.use('/clients', databaseService('clients'));
 app.use('/users', databaseService('users'));
 
 app.use('/devices', databaseService('devices'));
+app.use('/agents', databaseService('agents'));
+app.use('/rooms', databaseService('rooms'));
 app.use('/groups', databaseService('groups'));
 
 app.service('clients').hooks(clientHooks);
 app.service('devices').hooks(iotDeviceHooks);
+app.service('agents').hooks(iotAgentHooks);
+app.service('rooms').hooks(roomHooks);
 logger.verbose('Service initialization complete');
 // #endregion
 

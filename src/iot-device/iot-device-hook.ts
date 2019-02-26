@@ -3,8 +3,9 @@ import * as lodash from 'lodash';
 
 import { Mqtt } from '../iot/mqtt';
 import { logger } from '../logger';
+import { Utility } from '../utility';
 
-import { IDeviceGroup } from '../device-group/device-group-model';
+import { IIotAgent } from '../iot-agent/iot-agent-model';
 import { IIotDevice } from './iot-device-model';
 
 export const iotDeviceHooks: Partial<HooksObject> = {
@@ -76,55 +77,38 @@ export const iotDeviceHooks: Partial<HooksObject> = {
     async create(context: HookContext<IIotDevice>) {
       const data = context.data;
       const params = context.params;
-      const {
-        roomId,
-        deviceGroupId
-      }: { roomId: string; deviceGroupId: string } = <any>params.query;
+      const { agentId }: { agentId: string } = <any>params.query;
 
-      // Default state when creating
-      data.isOn = false;
+      const agent: IIotAgent = await context.app.service('agents').get(agentId);
+      const deviceId = Utility.generateId(agentId, data.name);
 
-      const deviceGroup: IDeviceGroup = await context.app
-        .service('groups')
-        .get(deviceGroupId);
-
-      const room = lodash.find(deviceGroup.rooms, { _id: roomId });
-
-      // #region Parameter checking
-      if (room === undefined) {
+      if (agent === undefined) {
         const message =
-          'room does not exist. Please check room id or create new room';
-        logger.warn(message, params.query);
+          'Given agent does not exist. Try different agent or create one';
+        logger.warn(message, { device: data, agentId });
         throw new Error(message);
       }
 
-      const deviceId = lodash
-        .join([deviceGroupId, roomId, data.name], '-')
-        .toLowerCase();
-
-      if (lodash.includes(room.deviceIds, deviceId)) {
-        const message = 'Device already exists in the given room';
-        logger.warn(message, { device: data, room: roomId });
+      if (await Utility.isChild(deviceId, context.service, { agentId })) {
+        const message = 'Device already exist for given agent';
+        logger.warn(message, { data });
         throw new Error(message);
       }
       // #endregion
 
-      // Add Room and Group Reference
-      data.roomId = roomId;
-      data.groupId = deviceGroupId;
-      // Add Device Reference
-      room.deviceIds.push(deviceId);
-      // For Updating group in after hook when successfully saved
-      params.deviceGroup = deviceGroup;
+      // Default state when creating
+      data.isOn = false;
+      // Add Agent reverse reference
+      data.agentId = agent._id;
+
+      data._id = deviceId;
 
       return context;
-    }
-  },
-  after: {
-    async create(context: HookContext<IIotDevice>) {
-      const deviceGroup: IDeviceGroup = context.params.deviceGroup;
-
-      await context.app.service('groups').patch(deviceGroup._id, deviceGroup);
+    },
+    update(context: HookContext<IIotDevice>) {
+      const data = context.data;
+      // Default state when creating
+      data.isOn = lodash.isNil(data.isOn) ? false : data.isOn;
 
       return context;
     }
