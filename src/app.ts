@@ -1,6 +1,6 @@
 // tslint:disable-next-line match-default-export-name
 import express from '@feathersjs/express';
-import feathers from '@feathersjs/feathers';
+import feathers, { HookContext } from '@feathersjs/feathers';
 import * as cors from 'cors';
 import * as dotenv from 'dotenv';
 import * as morgan from 'morgan';
@@ -55,6 +55,21 @@ app.configure(express.rest());
 
 Mqtt.init();
 logger.info('Mqtt Initialized');
+
+app.hooks({
+  before: {
+    all(context: HookContext) {
+      const {id, data, params, method, path} = context;
+      logger.verbose('Request Initiated', path, method, id, data, params);
+    }
+  },
+  after: {
+    all(context: HookContext) {
+      const {id, data, params, method, path} = context;
+      logger.verbose('Request Completed', path, method, id, data, params);
+    }
+  }
+});
 
 // #region Service Registration
 app.use('/clients', databaseService('clients'));
