@@ -2,9 +2,10 @@
 .gitignore
 node_modules
 npm-debug.log
-dist
 app.log
 *.sh
+*/bin
+*/obj
 .vscode
 .github
 README.md

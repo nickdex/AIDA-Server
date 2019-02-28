@@ -2,14 +2,15 @@
 import express from '@feathersjs/express';
 import feathers, { HookContext } from '@feathersjs/feathers';
 import * as cors from 'cors';
-import * as dotenv from 'dotenv';
 import * as morgan from 'morgan';
 
 import { logger } from './logger';
 
+// Deprecated, we now use docker compose
 // Load environment variables from .env file, where API keys and passwords are configured
-dotenv.config({ path: 'env/.env' });
-logger.verbose('Environment file loaded');
+// import * as dotenv from 'dotenv';
+// dotenv.config({ path: 'env/.env.development' });
+//logger.verbose('Environment file loaded');
 
 import { Mqtt } from './iot/mqtt';
 
