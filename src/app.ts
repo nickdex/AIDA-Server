@@ -30,7 +30,7 @@ import { databaseService } from './database';
 const app = express(feathers());
 logger.verbose('Express app created using feathers');
 
-const whitelist = JSON.parse(process.env.CORS_CLIENT_WHITELIST_URLS);
+// const whitelist = JSON.parse(process.env.CORS_CLIENT_WHITELIST_URLS);
 
 // #region Express configuration
 app.set('port', process.env.PORT || 3000);
@@ -40,12 +40,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.errorHandler());
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (whitelist.indexOf(origin) !== -1 || !origin) {
+    origin: (_, callback) => {
+      // if (whitelist.indexOf(origin) !== -1 || !origin) {
         callback(undefined, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
+      // } else {
+      //   callback(new Error('Not allowed by CORS'));
+      // }
     }
   })
 );
