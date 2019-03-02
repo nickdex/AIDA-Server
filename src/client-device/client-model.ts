@@ -1,7 +1,11 @@
 export interface IClient {
+  _id: string;
+
   name: string;
-  deviceType: DeviceType ;
+  deviceType: DeviceType;
   subscriptionToken?: string;
+
+  userId: string; // IUser._id
 }
 
 export enum DeviceType {

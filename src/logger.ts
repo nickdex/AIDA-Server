@@ -36,7 +36,7 @@ const logFormat = winston.format.combine(
 );
 
 export const logger = winston.createLogger({
-  level: 'info',
+  level: process.env.LOG_LEVEL,
   levels,
   transports: [
     new winston.transports.File({ filename: 'app.log' }),

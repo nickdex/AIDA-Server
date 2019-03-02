@@ -1,6 +1,6 @@
 // tslint:disable-next-line match-default-export-name
 import express from '@feathersjs/express';
-import feathers from '@feathersjs/feathers';
+import feathers, { HookContext } from '@feathersjs/feathers';
 import * as cors from 'cors';
 import * as dotenv from 'dotenv';
 import * as morgan from 'morgan';
@@ -19,7 +19,9 @@ import { PushController } from './controllers/push';
 
 // Hooks
 import { clientHooks } from './client-device/client-hook';
+import { iotAgentHooks } from './iot-agent/iot-agent-hook';
 import { iotDeviceHooks } from './iot-device/iot-device-hook';
+import { roomHooks } from './room/room-hook';
 
 // Database
 import { databaseService } from './database';
@@ -28,7 +30,7 @@ import { databaseService } from './database';
 const app = express(feathers());
 logger.verbose('Express app created using feathers');
 
-const whitelist = JSON.parse(process.env.CORS_CLIENT_WHITELIST_URLS);
+// const whitelist = JSON.parse(process.env.CORS_CLIENT_WHITELIST_URLS);
 
 // #region Express configuration
 app.set('port', process.env.PORT || 3000);
@@ -38,12 +40,12 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.errorHandler());
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (whitelist.indexOf(origin) !== -1 || !origin) {
+    origin: (_, callback) => {
+      // if (whitelist.indexOf(origin) !== -1 || !origin) {
         callback(undefined, true);
-      } else {
-        callback(new Error('Not allowed by CORS'));
-      }
+      // } else {
+      //   callback(new Error('Not allowed by CORS'));
+      // }
     }
   })
 );
@@ -54,15 +56,34 @@ app.configure(express.rest());
 Mqtt.init();
 logger.info('Mqtt Initialized');
 
+app.hooks({
+  before: {
+    all(context: HookContext) {
+      const {id, data, params, method, path} = context;
+      logger.verbose('Request Initiated', path, method, id, data, params);
+    }
+  },
+  after: {
+    all(context: HookContext) {
+      const {id, data, params, method, path} = context;
+      logger.verbose('Request Completed', path, method, id, data, params);
+    }
+  }
+});
+
 // #region Service Registration
-app.use('/clients', databaseService('users'));
+app.use('/clients', databaseService('clients'));
 app.use('/users', databaseService('users'));
 
 app.use('/devices', databaseService('devices'));
+app.use('/agents', databaseService('agents'));
+app.use('/rooms', databaseService('rooms'));
 app.use('/groups', databaseService('groups'));
 
 app.service('clients').hooks(clientHooks);
 app.service('devices').hooks(iotDeviceHooks);
+app.service('agents').hooks(iotAgentHooks);
+app.service('rooms').hooks(roomHooks);
 logger.verbose('Service initialization complete');
 // #endregion
 
