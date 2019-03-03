@@ -60,11 +60,13 @@ export const iotDeviceHooks: Partial<HooksObject> = {
         return context;
       }
 
+      const device = await context.service.get(context.id);
+
       try {
         await Mqtt.send({
           action: data.isOn ? 'on' : 'off',
-          device: data.pin,
-          sender: 'server'
+          device: device.pin,
+          agentId: device.agentId
         });
       } catch (err) {
         const message = 'Iot device could not complete request';

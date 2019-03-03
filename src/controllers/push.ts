@@ -21,13 +21,14 @@ export namespace PushController {
    */
   export const click = async (req: Request, res: Response) => {
     const action = req.body.action;
+    const agentId = req.body.agentId;
     logger.debug(`User clicked: ${action}`);
 
     // Execute action using mqtt
     const payload: IotPayload = {
       action,
-      device: 2, // Fan demo
-      sender: 'server'
+      device: 2, // Fan demo,
+      agentId
     };
     const response = await Mqtt.send(payload);
     logger.info(`Mqtt message send successfully. Response: ${response}`);

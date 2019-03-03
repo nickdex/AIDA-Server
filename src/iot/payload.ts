@@ -3,12 +3,8 @@
  * @export
  * @class IotPayload
  */
-export class IotPayload {
-  public device: number;
-  public action: string;
-  public sender: string;
-
-  constructor() {
-    this.sender = 'server';
-  }
+export interface IotPayload {
+  device: number;
+  action: string;
+  agentId: string;
 }
