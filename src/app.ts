@@ -43,7 +43,7 @@ app.use(
   cors({
     origin: (_, callback) => {
       // if (whitelist.indexOf(origin) !== -1 || !origin) {
-        callback(undefined, true);
+      callback(undefined, true);
       // } else {
       //   callback(new Error('Not allowed by CORS'));
       // }
@@ -60,13 +60,13 @@ logger.info('Mqtt Initialized');
 app.hooks({
   before: {
     all(context: HookContext) {
-      const {id, data, params, method, path} = context;
+      const { id, data, params, method, path } = context;
       logger.verbose('Request Initiated', path, method, id, data, params);
     }
   },
   after: {
     all(context: HookContext) {
-      const {id, data, params, method, path} = context;
+      const { id, data, params, method, path } = context;
       logger.verbose('Request Completed', path, method, id, data, params);
     }
   }
