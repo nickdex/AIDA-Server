@@ -14,6 +14,10 @@ export const clientHooks: Partial<HooksObject> = {
       const { username } = <{ username: string }>query;
       const data = context.data;
 
+      ['userId', 'name', 'deviceType'].forEach(k => {
+        query[k] = lodash.toLower(query[k]);
+      });
+
       if (lodash.includes(['create', 'update', 'patch'], context.method)) {
         if (context.method === 'create') {
           if (!username) {
