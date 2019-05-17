@@ -4,12 +4,10 @@
   "version": "2.0.0",
   "tasks": [
     {
-      "type": "npm",
-      "script": "build",
-      "problemMatcher": [
-        "$tsc-watch"
-      ],
-      "isBackground": true
+      "label": "Lint",
+      "type": "shell",
+      "command": "yarn lint",
+      "problemMatcher": ["$tsc"]
     }
   ]
 }
