@@ -3,7 +3,7 @@
  * @export
  * @class IotPayload
  */
-export interface IotPayload {
+export interface IIotPayload {
   device: number;
   action: string;
   agentId: string;

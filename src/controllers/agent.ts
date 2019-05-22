@@ -1,7 +1,7 @@
 import { Request, Response } from '@feathersjs/express';
 import * as lodash from 'lodash';
 import { Mqtt } from '../iot/mqtt';
-import { IotPayload } from '../iot/payload';
+import { IIotPayload } from '../iot/payload';
 
 export const parseActionString = (str: string): any => {
   const intent: string[] = str.split('.');
@@ -30,7 +30,7 @@ export const parseContext = (contexts: any[]) => {
   return context;
 };
 
-const parseIntent = (data: any): IotPayload => {
+const parseIntent = (data: any): IIotPayload => {
   const payload: any = {
     action: '',
     device: '',
@@ -71,7 +71,7 @@ const parseIntent = (data: any): IotPayload => {
 };
 
 export let agent = (req: Request, res: Response) => {
-  const payload: IotPayload = parseIntent(req.body.result);
+  const payload: IIotPayload = parseIntent(req.body.result);
 
   Mqtt.send(payload)
     .then(response => {
