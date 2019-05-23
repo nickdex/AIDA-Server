@@ -1,6 +1,8 @@
 {
-  "extends": ["tslint-microsoft-contrib/recommended"],
+  "extends": ["tslint-microsoft-contrib/recommended", "tslint-config-prettier"],
+  "rulesDirectory": "tslint-plugin-prettier",
   "rules": {
+    "prettier": [true, { "singleQuote": true }],
     "mocha-no-side-effect-code": false,
     "missing-jsdoc": false,
     "no-relative-imports": false,
