@@ -1,14 +1,13 @@
 {
   "cSpell.words": [
     "autoload",
-    "mqtt",
     "feathersjs",
     "gcmapi",
+    "mqtt",
     "nedbdevice",
     "nospace",
     "onespace",
     "printf",
-    "quotemark"
   ],
   "editor.tabSize": 2
 }
