@@ -28,7 +28,7 @@ import { roomHooks } from './room/room-hook';
 import { databaseService } from './database';
 
 // Create Express server
-const app = express(feathers());
+const app = express<any>(feathers());
 logger.verbose('Express app created using feathers');
 
 // const whitelist = JSON.parse(process.env.CORS_CLIENT_WHITELIST_URLS);

@@ -1,4 +1,4 @@
-import { HookContext, HooksObject } from '@feathersjs/feathers';
+import { HookContext } from '@feathersjs/feathers';
 
 import { logger } from '../logger';
 import { Utility } from '../utility';
@@ -6,7 +6,7 @@ import { Utility } from '../utility';
 import { IDeviceGroup } from '../device-group/device-group-model';
 import { IRoom } from './room-model';
 
-export const roomHooks: Partial<HooksObject> = {
+export const roomHooks = {
   before: {
     async create(context: HookContext<IRoom>) {
       const data = context.data;
@@ -26,9 +26,7 @@ export const roomHooks: Partial<HooksObject> = {
         throw new Error(message);
       }
 
-      if (
-        await Utility.isChild(roomId, context.service, { deviceGroupId })
-      ) {
+      if (await Utility.isChild(roomId, context.service, { deviceGroupId })) {
         const message = 'Room already exists for given device group';
         logger.warn(message, { data });
         throw new Error(message);

@@ -21,9 +21,7 @@ const logFormat = winston.format.combine(
   winston.format.label({ label }),
   winston.format.timestamp({ format: dateFormat }),
   winston.format.printf(info => {
-    const logMessage = `${info.timestamp} [${info.label}] ${info.level}: ${
-      info.message
-    }`;
+    const logMessage = `${info.timestamp} [${info.label}] ${info.level}: ${info.message}`;
 
     if (info[SPLAT]) {
       const splat = info[SPLAT].map(a => JSON.stringify(a)).join(', ');

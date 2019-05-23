@@ -1,4 +1,4 @@
-import { HookContext, HooksObject } from '@feathersjs/feathers';
+import { HookContext } from '@feathersjs/feathers';
 import * as lodash from 'lodash';
 
 import { Mqtt } from '../iot/mqtt';
@@ -8,7 +8,7 @@ import { Utility } from '../utility';
 import { IIotAgent } from '../iot-agent/iot-agent-model';
 import { IIotDevice } from './iot-device-model';
 
-export const iotDeviceHooks: Partial<HooksObject> = {
+export const iotDeviceHooks = {
   before: {
     all(context: HookContext<IIotDevice>) {
       const data: IIotDevice = context.data;

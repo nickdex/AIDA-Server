@@ -1,4 +1,4 @@
-import { HookContext, HooksObject } from '@feathersjs/feathers';
+import { HookContext } from '@feathersjs/feathers';
 
 import { Mqtt } from '../iot/mqtt';
 import { logger } from '../logger';
@@ -7,7 +7,7 @@ import { Utility } from '../utility';
 import { IRoom } from '../room/room-model';
 import { IIotAgent } from './iot-agent-model';
 
-export const iotAgentHooks: Partial<HooksObject> = {
+export const iotAgentHooks = {
   before: {
     update(context: HookContext) {
       if (context.params.query.action !== 'firmware') {
@@ -24,10 +24,9 @@ export const iotAgentHooks: Partial<HooksObject> = {
           return resolve(context);
         });
 
-        Mqtt.send({ isUpdate: true, agentId })
-          .catch(err => {
-            throw new Error(err.message);
-          });
+        Mqtt.send({ isUpdate: true, agentId }).catch(err => {
+          throw new Error(err.message);
+        });
       });
     },
     async create(context: HookContext<IIotAgent>) {
