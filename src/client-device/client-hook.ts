@@ -1,4 +1,4 @@
-import { HookContext, HooksObject } from '@feathersjs/feathers';
+import { HookContext } from '@feathersjs/feathers';
 import * as lodash from 'lodash';
 
 import { logger } from '../logger';
@@ -7,7 +7,7 @@ import { Utility } from '../utility';
 import { IUser } from '../user/user-model';
 import { DeviceType, IClient } from './client-model';
 
-export const clientHooks: Partial<HooksObject> = {
+export const clientHooks = {
   before: {
     all(context: HookContext<IClient>) {
       const query = context.params.query;
@@ -30,9 +30,7 @@ export const clientHooks: Partial<HooksObject> = {
         }
         if (context.method !== 'patch') {
           if (!data.name || !data.deviceType) {
-            const message = `client ${
-              context.method
-            } failed. Need both name and deviceType`;
+            const message = `client ${context.method} failed. Need both name and deviceType`;
             logger.warn(message, { data });
             throw new Error(message);
           }

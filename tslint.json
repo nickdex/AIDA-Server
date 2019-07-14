@@ -1,11 +1,8 @@
-/**
- * This starter project recommended using Microsoft TSLint rules.
- * Please see https://github.com/Microsoft/tslint-microsoft-contrib for more details.
- */
-
 {
-  "extends": ["tslint-microsoft-contrib"],
+  "extends": ["tslint-microsoft-contrib/recommended", "tslint-config-prettier"],
+  "rulesDirectory": "tslint-plugin-prettier",
   "rules": {
+    "prettier": [true, { "singleQuote": true }],
     "mocha-no-side-effect-code": false,
     "missing-jsdoc": false,
     "no-relative-imports": false,
@@ -20,7 +17,6 @@
     "strict-boolean-expressions": false,
     "newline-per-chained-call": false,
     "trailing-comma": [
-      // https://palantir.github.io/tslint/rules/trailing-comma/
       false,
       {
         "multiline": "always",

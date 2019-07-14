@@ -4,7 +4,7 @@ import * as webPush from 'web-push';
 
 import { IClient } from '../client-device/client-model';
 import { Mqtt } from '../iot/mqtt';
-import { IotPayload } from '../iot/payload';
+import { IIotPayload } from '../iot/payload';
 import { logger } from '../logger';
 
 export namespace PushController {
@@ -25,7 +25,7 @@ export namespace PushController {
     logger.debug(`User clicked: ${action}`);
 
     // Execute action using mqtt
-    const payload: IotPayload = {
+    const payload: IIotPayload = {
       action,
       device: 2, // Fan demo,
       agentId

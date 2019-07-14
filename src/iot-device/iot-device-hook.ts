@@ -1,4 +1,4 @@
-import { HookContext, HooksObject } from '@feathersjs/feathers';
+import { HookContext } from '@feathersjs/feathers';
 import * as lodash from 'lodash';
 
 import { Mqtt } from '../iot/mqtt';
@@ -8,7 +8,7 @@ import { Utility } from '../utility';
 import { IIotAgent } from '../iot-agent/iot-agent-model';
 import { IIotDevice } from './iot-device-model';
 
-export const iotDeviceHooks: Partial<HooksObject> = {
+export const iotDeviceHooks = {
   before: {
     all(context: HookContext<IIotDevice>) {
       const data: IIotDevice = context.data;
@@ -62,19 +62,21 @@ export const iotDeviceHooks: Partial<HooksObject> = {
 
       const device = await context.service.get(context.id);
 
-      try {
-        await Mqtt.send({
+      return new Promise<HookContext<IIotDevice>>(resolve => {
+        Mqtt.iotEmitter.once('action', () => {
+          resolve(context);
+        });
+
+        Mqtt.send({
           action: data.isOn ? 'on' : 'off',
           device: device.pin,
           agentId: device.agentId
+        }).catch(err => {
+          const message = 'Iot device could not complete request';
+          logger.warn(message, err);
+          throw new Error(message);
         });
-      } catch (err) {
-        const message = 'Iot device could not complete request';
-        logger.warn(message, err);
-        throw new Error(message);
-      }
-
-      return context;
+      });
     },
     async create(context: HookContext<IIotDevice>) {
       const data = context.data;
